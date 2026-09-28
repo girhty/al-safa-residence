@@ -1,0 +1,49 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { business } from '../data/site';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = {
+  ar: {
+    eyebrow: 'خيارات التمويل',
+    title: 'تملّك شقتك بتمويل مصرفي ميسّر',
+    intro: 'الحياة التي تستحقها عائلتك أصبحت أقرب. اختر خطة التمويل الأنسب لك بالتعاون مع المصارف المعتمدة.',
+    note: 'المصدر: منشور رسمي على حساب المشروع في إنستغرام. الشروط النهائية تخضع لموافقة المصرف وقد تتغير — يرجى التأكيد مع فريق المبيعات.',
+  },
+  en: {
+    eyebrow: 'Financing',
+    title: 'Own your apartment with accessible bank financing',
+    intro: 'The life your family deserves is closer than you think. Choose the financing plan that suits you, in partnership with approved banks.',
+    note: 'Source: official post on the project’s Instagram account. Final terms are subject to bank approval and may change — please confirm with our sales team.',
+  },
+}[lang];
+---
+
+<section aria-labelledby="financing-heading" class="bg-river py-20 text-ivory lg:py-28">
+  <div class="container-x">
+    <SectionHeading id="financing-heading" eyebrow={c.eyebrow} title={c.title} intro={c.intro} dark />
+    <ul class="mt-12 grid gap-6 md:grid-cols-2" role="list">
+      {business.financing.map((plan) => (
+        <li class="rounded-3xl border border-white/15 bg-white/5 p-7">
+          <span class="grid h-12 w-12 place-items-center rounded-2xl bg-bronze text-white"><Icon name="bank" /></span>
+          <h3 class="mt-5 text-2xl font-bold text-ivory">{plan.bank[lang]}</h3>
+          <ul class="mt-4 space-y-3" role="list">
+            {plan.points[lang].map((p) => (
+              <li class="flex items-start gap-3 text-lg text-sand">
+                <Icon name="check" class="mt-1.5 h-5 w-5 shrink-0 text-bronze-300" />
+                <span><bdi>{p}</bdi></span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-8 flex max-w-3xl items-start gap-2 text-sm text-sand">
+      <Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />
+      {c.note}
+    </p>
+  </div>
+</section>

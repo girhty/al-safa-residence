@@ -1,0 +1,79 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import SmartImage from './SmartImage.astro';
+import Icon from './Icon.astro';
+import { business } from '../data/site';
+import { media } from '../data/media';
+import { formatNumber, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; limit?: number }
+const { lang, limit = 6 } = Astro.props;
+const posts = media.filter((m) => m.source === 'instagram').slice(0, limit);
+const ig = business.instagram;
+const c = {
+  ar: {
+    eyebrow: 'إنستغرام',
+    title: 'آخر أخبار المشروع وعروضه',
+    followers: `${formatNumber(ig.followers, 'ar')} متابع`,
+    follow: 'تابعنا على إنستغرام',
+    view: 'عرض على إنستغرام',
+    newTab: '(يفتح في نافذة جديدة)',
+    profileAlt: 'الصورة الشخصية لحساب مجمع الصفا السكني على إنستغرام',
+    offline: 'منشورات إنستغرام غير متاحة دون اتصال',
+    captionNote: '',
+  },
+  en: {
+    eyebrow: 'Instagram',
+    title: 'Latest project news and offers',
+    followers: `${formatNumber(ig.followers, 'en')} followers`,
+    follow: 'Follow us on Instagram',
+    view: 'View on Instagram',
+    newTab: '(opens in a new tab)',
+    profileAlt: 'Al Safa Residence Instagram profile picture',
+    offline: 'Instagram posts are unavailable offline',
+    captionNote: 'Caption in Arabic',
+  },
+}[lang];
+---
+
+<section aria-labelledby="instagram-heading" class="bg-ivory-50 py-20 lg:py-28">
+  <div class="container-x">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading id="instagram-heading" eyebrow={c.eyebrow} title={c.title} />
+      <div class="card flex flex-wrap items-center gap-4 p-4">
+        <SmartImage src={ig.profilePic} alt={c.profileAlt} width={150} height={150} lang={lang} class="h-14 w-14 shrink-0 rounded-full" ratio="1/1" />
+        <div>
+          <p class="font-semibold text-river"><bdi dir="ltr">@{ig.handle}</bdi></p>
+          <p class="text-sm text-ink/80"><bdi>{c.followers}</bdi></p>
+        </div>
+        <a href={ig.url} target="_blank" rel="noopener" class="btn-primary px-5">
+          <Icon name="instagram" class="h-5 w-5" />
+          {c.follow}<span class="sr-only">{c.newTab}</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" role="list" data-dynamic data-offline-label={c.offline}>
+      {posts.map((p) => (
+        <li>
+          <article class="card group flex h-full flex-col overflow-hidden">
+            <div class="relative">
+              <SmartImage src={p.src} alt={p.alt[lang]} width={p.width} height={p.height} ratio="1/1" lang={lang} imgClass="transition-transform duration-500 group-hover:scale-105" />
+              <span class="absolute end-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-ivory/90 text-river" aria-hidden="true">
+                <Icon name="instagram" class="h-5 w-5" />
+              </span>
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <p lang="ar" dir="rtl" class="line-clamp-3 whitespace-pre-line text-start text-ink/85">{p.caption}</p>
+              {c.captionNote && <p class="mt-1 text-xs text-ink/70">{c.captionNote}</p>}
+              <a href={ig.url} target="_blank" rel="noopener" class="mt-auto inline-flex min-h-[44px] items-center gap-2 pt-3 font-semibold text-bronze hover:underline">
+                {c.view}<span class="sr-only">{c.newTab}</span>
+                <Icon name="arrow" class="h-4 w-4 rtl:-scale-x-100" />
+              </a>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

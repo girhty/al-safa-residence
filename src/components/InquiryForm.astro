@@ -1,0 +1,536 @@
+---
+import Icon from './Icon.astro';
+import { FORM_ENDPOINT, business } from '../data/site';
+import { units } from '../data/units';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  id?: string;
+  compact?: boolean;
+  unitSlug?: string;
+  label?: string;
+}
+const { lang, id = 'inquiry-form', compact = false, unitSlug, label } = Astro.props;
+
+const c = {
+  ar: {
+    name: 'الاسم الكامل',
+    phone: 'رقم الهاتف',
+    email: 'البريد الإلكتروني (اختياري)',
+    unit: 'الوحدة التي تهمك (اختياري)',
+    unitGeneral: 'استفسار عام عن المشروع',
+    date: 'موعد المعاينة المفضّل (اختياري)',
+    message: 'رسالتك (اختياري)',
+    consent: 'أوافق على أن يتواصل معي فريق مجمع الصفا السكني بخصوص هذا الطلب.',
+    required: '(مطلوب)',
+    phHint: 'رقم عراقي أو دولي، ويمكنك الكتابة بالأرقام العربية.',
+    phName: 'اكتب اسمك الكامل',
+    phPhone: '07XX XXX XXXX',
+    phEmail: 'name@example.com',
+    phMessage: 'مثل: عدد أفراد العائلة أو الوقت المناسب للاتصال بك',
+    demo: 'وضع المعاينة — غير مكتمل: لم يُربط هذا النموذج بخادم استقبال بعد، لذا يُحاكى الإرسال محلياً ولا تُرسل أي بيانات.',
+    another: 'إرسال طلب آخر',
+    honeypot: 'اترك هذا الحقل فارغاً',
+  },
+  en: {
+    name: 'Full name',
+    phone: 'Phone number',
+    email: 'Email (optional)',
+    unit: 'Unit of interest (optional)',
+    unitGeneral: 'General project inquiry',
+    date: 'Preferred viewing date (optional)',
+    message: 'Your message (optional)',
+    consent: 'I agree to be contacted by the Al Safa Residence team about this request.',
+    required: '(required)',
+    phHint: 'Iraqi or international number.',
+    phName: 'Enter your full name',
+    phPhone: '07XX XXX XXXX',
+    phEmail: 'name@example.com',
+    phMessage: 'e.g. family size or the best time to call you',
+    demo: 'Preview mode — unconfigured: this form is not yet connected to a receiving server, so submission is simulated locally and no data is sent.',
+    another: 'Send another request',
+    honeypot: 'Leave this field empty',
+  },
+}[lang];
+
+const messages = {
+  ar: {
+    nameRequired: 'يرجى إدخال الاسم الكامل.',
+    nameShort: 'يجب أن يتكوّن الاسم من حرفين على الأقل.',
+    phoneRequired: 'يرجى إدخال رقم الهاتف.',
+    phoneInvalid: 'رقم الهاتف غير صالح. أدخل من 8 إلى 15 رقماً، مثل 07XX XXX XXXX.',
+    emailInvalid: 'صيغة البريد الإلكتروني غير صحيحة، مثل name@example.com.',
+    datePast: 'اختر تاريخاً يبدأ من اليوم أو بعده.',
+    messageLong: 'الرسالة أطول من 1000 حرف، يرجى اختصارها.',
+    consent: 'يرجى الموافقة على التواصل معك بخصوص طلبك.',
+    summaryOne: 'يوجد خطأ واحد في النموذج، يرجى تصحيحه:',
+    summaryMany: 'يوجد {n} أخطاء في النموذج، يرجى تصحيحها:',
+    submit: 'أرسل طلب المعاينة',
+    submitting: 'جارٍ الإرسال…',
+    successTitle: 'تم استلام طلبك بنجاح',
+    successBody: 'شكراً لاهتمامك بمجمع الصفا السكني. سيتصل بك الفريق قريباً لتأكيد موعد المعاينة.',
+    serverError: 'تعذّر إرسال طلبك بسبب خطأ في الخادم. بياناتك ما زالت في النموذج، يمكنك إعادة المحاولة أو الاتصال بنا مباشرةً.',
+    networkError: 'تعذّر الاتصال بالشبكة. تحقّق من اتصالك بالإنترنت ثم أعد المحاولة؛ بياناتك لم تُفقد.',
+    timeout: 'استغرق الإرسال وقتاً أطول من المتوقع. بياناتك محفوظة، يرجى إعادة المحاولة.',
+    offline: 'أنت غير متصل بالإنترنت. سيبقى ما كتبته محفوظاً، أعد المحاولة عند عودة الاتصال.',
+    retry: 'إعادة المحاولة',
+    callUs: 'أو اتصل بنا:',
+    counter: '{n} من 1000 حرف',
+  },
+  en: {
+    nameRequired: 'Please enter your full name.',
+    nameShort: 'Your name must be at least 2 characters.',
+    phoneRequired: 'Please enter your phone number.',
+    phoneInvalid: 'This phone number is not valid. Enter 8 to 15 digits, e.g. 07XX XXX XXXX.',
+    emailInvalid: 'This email format is not valid, e.g. name@example.com.',
+    datePast: 'Choose today or a later date.',
+    messageLong: 'Your message is longer than 1,000 characters — please shorten it.',
+    consent: 'Please agree to be contacted about your request.',
+    summaryOne: 'There is 1 problem with the form:',
+    summaryMany: 'There are {n} problems with the form:',
+    submit: 'Send viewing request',
+    submitting: 'Sending…',
+    successTitle: 'Your request has been received',
+    successBody: 'Thank you for your interest in Al Safa Residence. Our team will contact you shortly to confirm your viewing.',
+    serverError: 'We couldn’t send your request because of a server error. Your details are still in the form — please retry or call us directly.',
+    networkError: 'We couldn’t reach the network. Check your connection and try again — nothing you typed has been lost.',
+    timeout: 'Sending took longer than expected. Your details are safe — please try again.',
+    offline: 'You are offline. Everything you typed is kept; try again when your connection is back.',
+    retry: 'Try again',
+    callUs: 'Or call us:',
+    counter: '{n} of 1,000 characters',
+  },
+}[lang];
+
+const f = (name: string) => `${id}-${name}`;
+const describe = (name: string, extra = '') => [extra, `${f(name)}-err`].filter(Boolean).join(' ');
+const phone = business.branches[0].phones[0];
+---
+
+<div class="inquiry" data-inquiry data-form-id={id}>
+  {!FORM_ENDPOINT && (
+    <p class="mb-5 flex items-start gap-2 rounded-2xl border border-dashed border-bronze/60 bg-bronze/5 p-3 text-sm text-bronze-700">
+      <Icon name="info" class="mt-0.5 h-5 w-5 shrink-0" />
+      <span>{c.demo}</span>
+    </p>
+  )}
+
+  <div data-summary hidden role="alert" tabindex="-1" class="mb-5 rounded-2xl border-s-4 border-danger bg-[#FEF3F2] p-4 text-danger">
+    <p data-summary-title class="flex items-center gap-2 font-bold"><Icon name="alert" class="h-5 w-5" /><span></span></p>
+    <ul data-summary-list class="mt-2 list-inside list-disc space-y-1 text-sm" role="list"></ul>
+  </div>
+
+  <form id={id} novalidate data-endpoint={FORM_ENDPOINT} aria-label={label} class="grid gap-5">
+    <div class="absolute -start-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+      <label for={f('company')}>{c.honeypot}</label>
+      <input id={f('company')} name="company" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class:list={['grid gap-5', !compact && 'sm:grid-cols-2']}>
+      <div>
+        <label for={f('name')} class="field-label">{c.name} <span class="text-danger" aria-hidden="true">*</span><span class="sr-only">{c.required}</span></label>
+        <input id={f('name')} name="name" type="text" class="field-input" autocomplete="name" required minlength="2" maxlength="80" placeholder={c.phName} data-validate data-label={c.name} aria-describedby={describe('name')} />
+        <p id={`${f('name')}-err`} data-error-for="name" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+      </div>
+      <div>
+        <label for={f('phone')} class="field-label">{c.phone} <span class="text-danger" aria-hidden="true">*</span><span class="sr-only">{c.required}</span></label>
+        <input id={f('phone')} name="phone" type="tel" inputmode="tel" dir="ltr" class="field-input text-start rtl:text-end" autocomplete="tel" required maxlength="20" placeholder={c.phPhone} data-validate data-label={c.phone} aria-describedby={describe('phone', `${f('phone')}-hint`)} />
+        <p id={`${f('phone')}-hint`} class="mt-1 text-xs text-ink/75">{c.phHint}</p>
+        <p id={`${f('phone')}-err`} data-error-for="phone" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+      </div>
+    </div>
+
+    {!compact && (
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for={f('email')} class="field-label">{c.email}</label>
+          <input id={f('email')} name="email" type="email" dir="ltr" class="field-input text-start rtl:text-end" autocomplete="email" maxlength="120" placeholder={c.phEmail} data-validate data-label={c.email} aria-describedby={describe('email')} />
+          <p id={`${f('email')}-err`} data-error-for="email" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+        </div>
+        <div>
+          <label for={f('date')} class="field-label">{c.date}</label>
+          <input id={f('date')} name="date" type="date" class="field-input" data-validate data-label={c.date} aria-describedby={describe('date')} />
+          <p id={`${f('date')}-err`} data-error-for="date" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+        </div>
+      </div>
+    )}
+
+    {!compact && (
+      <div>
+        <label for={f('unit')} class="field-label">{c.unit}</label>
+        <select id={f('unit')} name="unit" class="field-input" data-default={unitSlug ?? ''}>
+          <option value="" selected={!unitSlug}>{c.unitGeneral}</option>
+          {units.map((u) => <option value={u.slug} selected={u.slug === unitSlug}>{u.name[lang]}</option>)}
+        </select>
+      </div>
+    )}
+
+    {!compact && (
+      <div>
+        <label for={f('message')} class="field-label">{c.message}</label>
+        <textarea id={f('message')} name="message" rows="4" maxlength="1200" class="field-input min-h-[120px] resize-y" placeholder={c.phMessage} data-validate data-label={c.message} aria-describedby={describe('message', `${f('message')}-count`)}></textarea>
+        <p id={`${f('message')}-count`} data-counter class="mt-1 text-xs text-ink/75" aria-live="off"></p>
+        <p id={`${f('message')}-err`} data-error-for="message" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+      </div>
+    )}
+
+    <div>
+      <label class="flex min-h-[44px] cursor-pointer items-start gap-3">
+        <input id={f('consent')} name="consent" type="checkbox" value="yes" required class="mt-1 h-5 w-5 shrink-0 accent-[#95601F]" data-validate data-label={c.consent} aria-describedby={describe('consent')} />
+        <span class="text-sm text-ink/85">{c.consent} <span class="text-danger" aria-hidden="true">*</span></span>
+      </label>
+      <p id={`${f('consent')}-err`} data-error-for="consent" class="field-error" hidden><Icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /><span></span></p>
+    </div>
+
+    <button type="submit" data-submit class="btn-primary w-full py-3 text-lg sm:w-auto sm:justify-self-start">
+      <span data-spinner hidden class="spinner" aria-hidden="true"></span>
+      <span data-label>{messages.submit}</span>
+    </button>
+  </form>
+
+  <div data-status hidden role="alert" class="mt-5 rounded-2xl border-s-4 border-danger bg-[#FEF3F2] p-4 text-danger"></div>
+
+  <div data-success hidden tabindex="-1" role="status" class="rounded-3xl border border-river/20 bg-river-100 p-6 text-river">
+    <p class="flex items-center gap-3 font-display text-xl font-bold">
+      <span class="grid h-10 w-10 place-items-center rounded-full bg-river text-ivory"><Icon name="check" class="h-5 w-5" /></span>
+      {messages.successTitle}
+    </p>
+    <p class="mt-3 text-ink/85">{messages.successBody}</p>
+    <p data-success-demo hidden class="mt-3 text-sm text-bronze-700">{c.demo}</p>
+    <button type="button" data-another class="btn-dark mt-5">{c.another}</button>
+  </div>
+
+  <script type="application/json" data-messages set:html={JSON.stringify({ ...messages, phoneDisplay: phone.display, phoneTel: phone.tel })} />
+</div>
+
+<script>
+  type Msgs = Record<string, string>;
+  type Field = HTMLInputElement | HTMLTextAreaElement;
+
+  const DIGITS: Record<string, string> = {
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4', '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+    '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4', '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+  };
+  const normDigits = (s: string) => s.replace(/[٠-٩۰-۹]/g, (d) => DIGITS[d] ?? d);
+  class ServerError extends Error {
+    status: number;
+    constructor(status: number) {
+      super(`HTTP ${status}`);
+      this.status = status;
+    }
+  }
+  const uid = () =>
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-inquiry]').forEach(init);
+
+  function init(root: HTMLElement) {
+    const form = root.querySelector('form') as HTMLFormElement;
+    const msgs: Msgs = JSON.parse(root.querySelector('[data-messages]')?.textContent || '{}');
+    const summary = root.querySelector('[data-summary]') as HTMLElement;
+    const summaryTitle = summary.querySelector('[data-summary-title] span') as HTMLElement;
+    const summaryList = root.querySelector('[data-summary-list]') as HTMLElement;
+    const status = root.querySelector('[data-status]') as HTMLElement;
+    const success = root.querySelector('[data-success]') as HTMLElement;
+    const successDemo = root.querySelector('[data-success-demo]') as HTMLElement;
+    const btn = form.querySelector('[data-submit]') as HTMLButtonElement;
+    const btnLabel = btn.querySelector('[data-label]') as HTMLElement;
+    const spinner = btn.querySelector('[data-spinner]') as HTMLElement;
+    const counter = form.querySelector<HTMLElement>('[data-counter]');
+    const endpoint = form.dataset.endpoint || '';
+    const draftKey = `alsafa:draft:${root.dataset.formId}`;
+    const idemKey = `${draftKey}:idem`;
+    const touched = new Set<string>();
+    let submitting = false;
+
+    const fields = () => Array.from(form.querySelectorAll<Field>('[data-validate]'));
+    const draftFields = () => Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input[name]:not([name="company"]):not([type="checkbox"]), textarea[name], select[name]'));
+    const dateInput = form.querySelector<HTMLInputElement>('input[name="date"]');
+    if (dateInput) dateInput.min = todayISO();
+
+    function validate(el: Field): string {
+      if (el instanceof HTMLInputElement && el.type === 'checkbox') return el.checked ? '' : msgs.consent;
+      const v = el.value.trim();
+      switch (el.name) {
+        case 'name':
+          if (!v) return msgs.nameRequired;
+          return v.length < 2 ? msgs.nameShort : '';
+        case 'phone': {
+          if (!v) return msgs.phoneRequired;
+          const d = normDigits(v).replace(/[\s\-().]/g, '');
+          return /^\+?\d{8,15}$/.test(d) ? '' : msgs.phoneInvalid;
+        }
+        case 'email':
+          return !v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : msgs.emailInvalid;
+        case 'date': {
+          if (!v) return '';
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const d = new Date(`${v}T00:00:00`);
+          return isNaN(d.getTime()) || d < today ? msgs.datePast : '';
+        }
+        case 'message':
+          return v.length > 1000 ? msgs.messageLong : '';
+      }
+      return '';
+    }
+
+    function show(el: Field, msg: string) {
+      const err = root.querySelector<HTMLElement>(`[data-error-for="${el.name}"]`);
+      const span = err?.querySelector('span');
+      if (msg) {
+        el.setAttribute('aria-invalid', 'true');
+        if (err && span) {
+          span.textContent = msg;
+          err.hidden = false;
+        }
+      } else {
+        el.removeAttribute('aria-invalid');
+        if (err && span) {
+          span.textContent = '';
+          err.hidden = true;
+        }
+      }
+    }
+
+    function renderSummary(errors: [Field, string][]) {
+      summaryTitle.textContent = errors.length === 1 ? msgs.summaryOne : msgs.summaryMany.replace('{n}', String(errors.length));
+      summaryList.replaceChildren(
+        ...errors.map(([el, m]) => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `#${el.id}`;
+          a.className = 'underline underline-offset-2';
+          a.textContent = m;
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            el.focus();
+          });
+          li.append(a);
+          return li;
+        }),
+      );
+      summary.hidden = false;
+      summary.focus();
+    }
+
+    function refreshSummary() {
+      if (summary.hidden) return;
+      const remaining = fields().filter((el) => el.getAttribute('aria-invalid') === 'true');
+      if (!remaining.length) summary.hidden = true;
+    }
+
+    function updateCounter() {
+      const ta = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+      if (counter && ta) counter.textContent = msgs.counter.replace('{n}', String(ta.value.length));
+    }
+
+    function saveDraft() {
+      try {
+        const data: Record<string, string> = {};
+        draftFields().forEach((el) => (data[el.name] = el.value));
+        sessionStorage.setItem(draftKey, JSON.stringify(data));
+      } catch {
+        /* storage unavailable */
+      }
+    }
+    function restoreDraft() {
+      try {
+        const data = JSON.parse(sessionStorage.getItem(draftKey) || 'null') as Record<string, string> | null;
+        if (!data) return;
+        draftFields().forEach((el) => {
+          if (el.name in data && data[el.name]) {
+            if (el instanceof HTMLSelectElement && el.dataset.default && !data[el.name]) return;
+            el.value = data[el.name];
+          }
+        });
+      } catch {
+        /* ignore */
+      }
+    }
+    function clearDraft() {
+      try {
+        sessionStorage.removeItem(draftKey);
+        sessionStorage.removeItem(idemKey);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    function setBusy(b: boolean) {
+      submitting = b;
+      btn.disabled = b;
+      btn.setAttribute('aria-disabled', String(b));
+      form.setAttribute('aria-busy', String(b));
+      btnLabel.textContent = b ? msgs.submitting : msgs.submit;
+      spinner.hidden = !b;
+    }
+
+    function showStatus(message: string) {
+      status.replaceChildren();
+      const p = document.createElement('p');
+      p.className = 'font-semibold';
+      p.textContent = message;
+      const row = document.createElement('div');
+      row.className = 'mt-3 flex flex-wrap items-center gap-3';
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'btn-dark';
+      retry.textContent = msgs.retry;
+      retry.addEventListener('click', () => form.requestSubmit(btn));
+      const call = document.createElement('a');
+      call.href = `tel:${msgs.phoneTel}`;
+      call.className = 'inline-flex min-h-[44px] items-center gap-1 font-semibold underline underline-offset-4';
+      const bdi = document.createElement('bdi');
+      bdi.dir = 'ltr';
+      bdi.textContent = msgs.phoneDisplay;
+      call.append(`${msgs.callUs} `, bdi);
+      row.append(retry, call);
+      status.append(p, row);
+      status.hidden = false;
+      retry.focus();
+    }
+
+    function simulate(mode: string | null, signal: AbortSignal) {
+      return new Promise<void>((resolve, reject) => {
+        const onAbort = () => reject(new DOMException('Aborted', 'AbortError'));
+        signal.addEventListener('abort', onAbort, { once: true });
+        if (mode === 'timeout') return; // wait for the abort timer
+        window.setTimeout(() => {
+          signal.removeEventListener('abort', onAbort);
+          if (mode === 'error') reject(new ServerError(503));
+          else if (mode === 'network') reject(new TypeError('Failed to fetch'));
+          else resolve();
+        }, 1400);
+      });
+    }
+
+    function onSuccess(demo: boolean) {
+      form.reset();
+      clearDraft();
+      touched.clear();
+      fields().forEach((el) => show(el, ''));
+      summary.hidden = true;
+      status.hidden = true;
+      form.hidden = true;
+      successDemo.hidden = !demo;
+      success.hidden = false;
+      success.focus();
+      updateCounter();
+    }
+
+    async function send() {
+      status.hidden = true;
+      if (!navigator.onLine) {
+        showStatus(msgs.offline);
+        return;
+      }
+      setBusy(true);
+      const sim = new URLSearchParams(location.search).get('simulate');
+      const fd = new FormData(form);
+      fd.delete('company');
+      const payload = {
+        ...Object.fromEntries(fd.entries()),
+        phone: normDigits(String(fd.get('phone') || '')),
+        lang: document.documentElement.lang,
+        page: location.pathname,
+        submittedAt: new Date().toISOString(),
+      };
+      let key = '';
+      try {
+        key = sessionStorage.getItem(idemKey) || '';
+        if (!key) {
+          key = uid();
+          sessionStorage.setItem(idemKey, key);
+        }
+      } catch {
+        key = key || uid();
+      }
+      const ctrl = new AbortController();
+      const timer = window.setTimeout(() => ctrl.abort(), sim === 'timeout' ? 4000 : 15000);
+      try {
+        if (endpoint && !sim) {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'Idempotency-Key': key },
+            body: JSON.stringify(payload),
+            signal: ctrl.signal,
+          });
+          if (!res.ok) throw new ServerError(res.status);
+        } else {
+          await simulate(sim, ctrl.signal);
+        }
+        onSuccess(!endpoint || Boolean(sim));
+      } catch (err) {
+        const e = err as Error;
+        if (e.name === 'AbortError') showStatus(msgs.timeout);
+        else if (e instanceof ServerError) showStatus(msgs.serverError);
+        else showStatus(navigator.onLine ? msgs.networkError : msgs.offline);
+      } finally {
+        window.clearTimeout(timer);
+        setBusy(false);
+      }
+    }
+
+    // ── wiring ──
+    restoreDraft();
+    updateCounter();
+    fields().forEach((el) => {
+      const isCheck = el instanceof HTMLInputElement && el.type === 'checkbox';
+      el.addEventListener(isCheck ? 'change' : 'input', () => {
+        touched.add(el.name);
+        if (isCheck || el.getAttribute('aria-invalid') === 'true') {
+          show(el, validate(el));
+          refreshSummary();
+        }
+      });
+      if (!isCheck) {
+        el.addEventListener('blur', () => {
+          if (touched.has(el.name) || el.value) {
+            show(el, validate(el));
+            refreshSummary();
+          }
+        });
+      }
+    });
+    form.addEventListener('input', () => {
+      saveDraft();
+      updateCounter();
+    });
+    form.addEventListener('change', saveDraft);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (submitting) return; // double-submit guard
+      const hp = form.querySelector<HTMLInputElement>('input[name="company"]');
+      if (hp && hp.value) {
+        onSuccess(false); // silently accept bots
+        return;
+      }
+      const errors: [Field, string][] = [];
+      fields().forEach((el) => {
+        const m = validate(el);
+        show(el, m);
+        if (m) errors.push([el, m]);
+      });
+      if (errors.length) {
+        status.hidden = true;
+        renderSummary(errors);
+        return;
+      }
+      summary.hidden = true;
+      void send();
+    });
+
+    root.querySelector('[data-another]')?.addEventListener('click', () => {
+      success.hidden = true;
+      form.hidden = false;
+      form.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
+    });
+  }
+</script>

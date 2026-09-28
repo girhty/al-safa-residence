@@ -1,0 +1,74 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { business } from '../data/site';
+import { formatNumber, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = {
+  ar: {
+    eyebrow: 'آراء الزوار',
+    title: 'تقييمات مجمع الصفا على Google',
+    intro: 'تقييم عام مرتفع من زوار المشروع على خرائط Google.',
+    summary: `${formatNumber(business.rating, 'ar')} من 5 بناءً على ${formatNumber(business.reviewCount, 'ar')} مراجعات`,
+    stars: (n: number) => `${n} من 5 نجوم`,
+    noText: 'تقييم بالنجوم دون تعليق مكتوب.',
+    all: 'عرض جميع المراجعات على Google',
+    newTab: '(يفتح في نافذة جديدة)',
+    translated: 'التعليق الأصلي بالإنجليزية',
+  },
+  en: {
+    eyebrow: 'Reviews',
+    title: 'What visitors say on Google',
+    intro: 'A high overall rating from visitors on Google Maps.',
+    summary: `${business.rating} out of 5 from ${business.reviewCount} reviews`,
+    stars: (n: number) => `${n} out of 5 stars`,
+    noText: 'Star rating without a written comment.',
+    all: 'See all reviews on Google',
+    newTab: '(opens in a new tab)',
+    translated: '',
+  },
+}[lang];
+---
+
+<section aria-labelledby="reviews-heading" class="py-20 lg:py-28">
+  <div class="container-x grid gap-12 lg:grid-cols-12 lg:items-start">
+    <div class="lg:col-span-4">
+      <SectionHeading id="reviews-heading" eyebrow={c.eyebrow} title={c.title} intro={c.intro} />
+      <div class="card mt-8 p-6">
+        <p class="font-display text-6xl font-extrabold text-river"><bdi>{formatNumber(business.rating, lang)}</bdi></p>
+        <div class="mt-2 flex gap-1 text-bronze" role="img" aria-label={c.summary}>
+          {[1, 2, 3, 4, 5].map((i) => <Icon name="star" filled class:list={['h-6 w-6', i > Math.round(business.rating) && 'opacity-30']} />)}
+        </div>
+        <p class="mt-2 text-ink/80">{c.summary}</p>
+        <a href={business.mapsUrl} target="_blank" rel="noopener" class="btn-ghost mt-5 w-full">
+          {c.all}<span class="sr-only">{c.newTab}</span>
+        </a>
+      </div>
+    </div>
+    <ul class="grid gap-4 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3" role="list">
+      {business.reviews.map((r) => (
+        <li>
+          <figure class="card flex h-full flex-col p-6">
+            <div class="flex gap-0.5 text-bronze" role="img" aria-label={c.stars(r.rating)}>
+              {[1, 2, 3, 4, 5].map((i) => <Icon name="star" filled class:list={['h-5 w-5', i > r.rating && 'opacity-25']} />)}
+            </div>
+            <blockquote class="mt-4 flex-1 text-lg text-ink">
+              {r.text ? (
+                <p lang="en" dir="ltr" class="text-start">“{r.text}”</p>
+              ) : (
+                <p class="text-base italic text-ink/75">{c.noText}</p>
+              )}
+            </blockquote>
+            {r.text && c.translated && <p class="mt-1 text-xs text-ink/70">{c.translated}</p>}
+            <figcaption class="mt-5 flex items-center gap-3 border-t border-sand pt-4">
+              <span class="grid h-10 w-10 place-items-center rounded-full bg-river-100 font-bold text-river" aria-hidden="true">{r.author.charAt(0)}</span>
+              <bdi class="font-semibold text-river" dir="ltr">{r.author}</bdi>
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

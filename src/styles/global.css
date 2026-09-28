@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  [hidden] {
+    display: none !important;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Arabic needs generous line-height for marks & descenders — never letter-spaced */
+  html[lang='ar'] body {
+    line-height: 1.85;
+  }
+  html[lang='en'] body {
+    line-height: 1.65;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-river;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+  html[lang='en'] h1,
+  html[lang='en'] h2 {
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 3px solid #95601F;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #F7F4EE;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: #E8DCC8;
+    color: #0E3A47;
+  }
+  bdi {
+    unicode-bidi: isolate;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 py-2.5 text-base font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-75;
+  }
+  .btn-primary {
+    @apply btn bg-bronze text-white hover:bg-bronze-700;
+  }
+  .btn-dark {
+    @apply btn bg-river text-ivory hover:bg-river-700;
+  }
+  .btn-ghost {
+    @apply btn border border-river/30 text-river hover:bg-river/5;
+  }
+  .btn-light {
+    @apply btn bg-ivory text-river hover:bg-sand;
+  }
+  .eyebrow {
+    @apply text-sm font-semibold text-bronze;
+  }
+  html[lang='en'] .eyebrow {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .card {
+    @apply rounded-3xl border border-sand bg-white shadow-sm;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-river;
+  }
+  .field-input {
+    @apply block min-h-[48px] w-full rounded-xl border border-river/30 bg-white px-4 py-2.5 text-base text-ink placeholder:text-ink/70;
+  }
+  .field-input[aria-invalid='true'] {
+    @apply border-danger bg-[#FEF3F2];
+  }
+  .field-error {
+    @apply mt-1.5 flex items-start gap-1.5 text-sm font-medium text-danger;
+  }
+}
+
+/* ── Smart image states: loading skeleton → smooth reveal → accessible fallback ── */
+.smart-img[data-state='loading'] {
+  background: linear-gradient(100deg, #F3ECE0 30%, #FBFAF7 50%, #F3ECE0 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.smart-img--dark[data-state='loading'] {
+  background: linear-gradient(100deg, #0E3A47 30%, #15505F 50%, #0E3A47 70%);
+  background-size: 200% 100%;
+}
+.smart-img img {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.smart-img[data-state='loaded'] img {
+  opacity: 1;
+}
+.smart-img[data-state='error'] img {
+  display: none;
+}
+.smart-img__fallback {
+  display: none;
+}
+.smart-img[data-state='error'] .smart-img__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  background: repeating-linear-gradient(135deg, #F3ECE0 0 12px, #EFE6D6 12px 24px);
+  color: #0E3A47;
+  font-size: 0.875rem;
+}
+.smart-img--dark[data-state='error'] .smart-img__fallback {
+  background: repeating-linear-gradient(135deg, #0E3A47 0 12px, #15505F 12px 24px);
+  color: #E8DCC8;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Offline labelling for areas that depend on remote content ── */
+html[data-offline='true'] [data-dynamic] {
+  position: relative;
+}
+html[data-offline='true'] [data-dynamic]::after {
+  content: attr(data-offline-label);
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  background: rgba(247, 244, 238, 0.92);
+  color: #0E3A47;
+  font-weight: 600;
+  text-align: center;
+}
+
+.spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 9999px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import UnitCard from '../../components/UnitCard.astro';
+import CompareTool from '../../components/CompareTool.astro';
+import Icon from '../../components/Icon.astro';
+import { units, unitDisplay, typeLabels, statusLabels, sizeBuckets, sizeBucketLabels } from '../../data/units';
+import type { Lang } from '../../i18n/ui';
+
+const lang: Lang = (Astro.props as { lang?: Lang }).lang ?? 'ar';
+const c = {
+  ar: {
+    title: 'الوحدات السكنية المتاحة | شقق مجمع الصفا السكني بالبصرة',
+    description:
+      'تصفّح نماذج الشقق في مجمع الصفا السكني بالبيبان في البصرة، وصنّفها حسب النوع والمساحة والحالة، وقارن بين وحدتين أو ثلاث جنباً إلى جنب قبل طلب المعاينة.',
+    eyebrow: 'الوحدات السكنية',
+    h1: 'الوحدات السكنية في مجمع الصفا',
+    intro: 'استكشف نماذج الشقق، وصفِّها حسب احتياجك، ثم قارن بينها قبل حجز موعد المعاينة.',
+    notice:
+      'المساحات والأسعار وحالة التوفر بانتظار اعتمادها من إدارة المشروع، لذا تظهر كـ«قريباً» أو «عند الطلب». الصور المعروضة للمشروع عامةً وليست للوحدة نفسها.',
+    filters: 'تصفية الوحدات',
+    results: 'نتائج الوحدات',
+    type: 'نوع الوحدة',
+    size: 'المساحة',
+    status: 'الحالة',
+    all: 'الكل',
+    reset: 'إعادة تعيين الفلاتر',
+    count0: 'لا توجد وحدات مطابقة',
+    count1: 'وحدة واحدة مطابقة',
+    count2: 'وحدتان مطابقتان',
+    countN: '{n} وحدات مطابقة',
+    emptyTitle: 'لا توجد وحدات مطابقة لهذه المعايير',
+    emptyBody: 'جرّب توسيع نطاق البحث أو إعادة تعيين الفلاتر. قد لا تكون المواصفات منشورة بعد.',
+  },
+  en: {
+    title: 'Apartments & Units | Al Safa Residence, Basra, Iraq',
+    description:
+      'Browse apartment models at Al Safa Residence in Al-Beban, Basra. Filter by type, size and status, and compare up to three units side by side before booking.',
+    eyebrow: 'Units',
+    h1: 'Apartments at Al Safa Residence',
+    intro: 'Explore our apartment models, filter them to your needs and compare them before booking a viewing.',
+    notice:
+      'Floor areas, prices and availability are awaiting confirmation from the project team, so they show as “Coming soon” or “On request”. Photos show the project in general, not the specific unit.',
+    filters: 'Filter units',
+    results: 'Unit results',
+    type: 'Unit type',
+    size: 'Size',
+    status: 'Status',
+    all: 'All',
+    reset: 'Reset filters',
+    count0: 'No matching units',
+    count1: '1 matching unit',
+    count2: '2 matching units',
+    countN: '{n} matching units',
+    emptyTitle: 'No units match these filters',
+    emptyBody: 'Try widening your search or resetting the filters. Specifications may not be published yet.',
+  },
+}[lang];
+
+const types = Array.from(new Set(units.map((u) => u.type)));
+const statuses = ['available', 'reserved', 'sold', 'unknown'] as const;
+---
+
+<Layout lang={lang} title={c.title} description={c.description} path="/properties/">
+  <section aria-labelledby="page-title" class="bg-river text-ivory">
+    <div class="container-x py-14 lg:py-20">
+      <p class="eyebrow !text-bronze-300">{c.eyebrow}</p>
+      <h1 id="page-title" class="mt-2 text-4xl font-extrabold text-ivory sm:text-5xl">{c.h1}</h1>
+      <p class="mt-4 max-w-2xl text-lg text-sand">{c.intro}</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="results-heading" class="container-x py-12 lg:py-16">
+    <h2 id="results-heading" class="sr-only">{c.results}</h2>
+    <p class="flex items-start gap-3 rounded-2xl border border-bronze/30 bg-bronze/5 p-4 text-bronze-700">
+      <Icon name="info" class="mt-0.5 h-5 w-5 shrink-0" />
+      <span>{c.notice}</span>
+    </p>
+
+    <form id="unit-filters" role="search" aria-label={c.filters} class="card mt-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
+      <div>
+        <label for="f-type" class="field-label">{c.type}</label>
+        <select id="f-type" name="type" class="field-input">
+          <option value="all">{c.all}</option>
+          {types.map((t) => <option value={t}>{typeLabels[t][lang]}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for="f-size" class="field-label">{c.size}</label>
+        <select id="f-size" name="size" class="field-input">
+          <option value="all">{c.all}</option>
+          {sizeBuckets.map((b) => <option value={b}>{sizeBucketLabels[b][lang]}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for="f-status" class="field-label">{c.status}</label>
+        <select id="f-status" name="status" class="field-input">
+          <option value="all">{c.all}</option>
+          {statuses.map((s) => <option value={s}>{statusLabels[s][lang]}</option>)}
+        </select>
+      </div>
+      <button type="reset" class="btn-ghost w-full">
+        <Icon name="refresh" class="h-5 w-5" />
+        {c.reset}
+      </button>
+    </form>
+
+    <p id="results-count" class="mt-6 font-semibold text-river" aria-live="polite" data-c0={c.count0} data-c1={c.count1} data-c2={c.count2} data-cn={c.countN}></p>
+
+    <ul id="unit-grid" class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
+      {units.map((u) => {
+        const d = unitDisplay(u, lang);
+        return (
+          <li data-unit-card data-type={u.type} data-size={d.sizeBucket} data-status={d.statusKey}>
+            <UnitCard unit={u} lang={lang} />
+          </li>
+        );
+      })}
+    </ul>
+
+    <div id="units-empty" hidden class="mt-4 flex flex-col items-center rounded-3xl border-2 border-dashed border-river/25 bg-white px-6 py-14 text-center">
+      <span class="grid h-14 w-14 place-items-center rounded-2xl bg-river-100 text-river"><Icon name="search" class="h-7 w-7" /></span>
+      <p class="mt-4 font-display text-xl font-bold text-river">{c.emptyTitle}</p>
+      <p class="mt-2 max-w-md text-ink/80">{c.emptyBody}</p>
+      <button type="button" data-reset-filters class="btn-dark mt-6">{c.reset}</button>
+    </div>
+  </section>
+
+  <CompareTool lang={lang} />
+</Layout>
+
+<script>
+  const form = document.getElementById('unit-filters') as HTMLFormElement | null;
+  const count = document.getElementById('results-count');
+  const empty = document.getElementById('units-empty');
+  const grid = document.getElementById('unit-grid');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-unit-card]'));
+
+  if (form && count && empty && grid) {
+    const selects = Array.from(form.querySelectorAll<HTMLSelectElement>('select'));
+    const params = new URLSearchParams(location.search);
+    selects.forEach((s) => {
+      const v = params.get(s.name);
+      if (v && Array.from(s.options).some((o) => o.value === v)) s.value = v;
+    });
+
+    const apply = () => {
+      const val = (n: string) => (form.elements.namedItem(n) as HTMLSelectElement).value;
+      const type = val('type');
+      const size = val('size');
+      const status = val('status');
+      let n = 0;
+      cards.forEach((c) => {
+        const show =
+          (type === 'all' || c.dataset.type === type) &&
+          (size === 'all' || c.dataset.size === size) &&
+          (status === 'all' || c.dataset.status === status);
+        c.hidden = !show;
+        if (show) n++;
+      });
+      const d = count.dataset;
+      count.textContent = n === 0 ? d.c0 || '' : n === 1 ? d.c1 || '' : n === 2 ? d.c2 || '' : (d.cn || '').replace('{n}', String(n));
+      empty.hidden = n > 0;
+      grid.hidden = n === 0;
+      const url = new URL(location.href);
+      selects.forEach((s) => (s.value === 'all' ? url.searchParams.delete(s.name) : url.searchParams.set(s.name, s.value)));
+      history.replaceState(null, '', url);
+    };
+
+    form.addEventListener('change', apply);
+    form.addEventListener('reset', () => setTimeout(apply, 0));
+    document.querySelector('[data-reset-filters]')?.addEventListener('click', () => {
+      form.reset();
+      setTimeout(() => {
+        apply();
+        selects[0]?.focus();
+      }, 0);
+    });
+    apply();
+  }
+</script>

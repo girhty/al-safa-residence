@@ -1,33 +1,13 @@
 ---
-import { instagram } from '../data/site';
-
-interface Props {
-  size?: number;
-  class?: string;
-  eager?: boolean;
-}
-
-const { size = 48, class: cls = '', eager = true } = Astro.props;
+interface Props { class?: string }
+const { class: cls = 'h-10 w-10' } = Astro.props;
 ---
 
-<span
-  class={`relative inline-block shrink-0 ${cls}`}
-  style={`width:${size}px;height:${size}px`}
-  role="img"
-  aria-label="Al Safa Residence logo"
->
-  <span class="absolute inset-0 clip-hex bg-gradient-to-br from-gold-pale via-gold to-bronze"></span>
-  <span class="absolute inset-[2px] clip-hex bg-obsidian"></span>
-  <img
-    src={instagram.profile_pic}
-    alt=""
-    width={size}
-    height={size}
-    loading={eager ? 'eager' : 'lazy'}
-    decoding="async"
-    referrerpolicy="no-referrer"
-    class="absolute left-[4px] top-[4px] clip-hex object-cover"
-    style={`width:${size - 8}px;height:${size - 8}px`}
-    onerror="this.onerror=null;this.src='/favicon.svg'"
-  />
-</span>
+<!-- Monogram placeholder: no official logo file was supplied (documented gap). -->
+<svg viewBox="0 0 48 48" class={cls} aria-hidden="true" focusable="false">
+  <rect width="48" height="48" rx="12" fill="#0E3A47"></rect>
+  <path d="M12 35V19l6-3v19z" fill="#E8DCC8"></path>
+  <path d="M20 35V13l8-4v26z" fill="#F7F4EE"></path>
+  <path d="M30 35V17l6 2.5V35z" fill="#E8DCC8"></path>
+  <path d="M8 39c5.3-3 10.7-3 16 0s10.7 3 16 0" stroke="#D9A560" stroke-width="2.4" fill="none" stroke-linecap="round"></path>
+</svg>

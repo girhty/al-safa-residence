@@ -1,0 +1,70 @@
+---
+import Icon from './Icon.astro';
+import { localizePath, ui, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang].tray;
+const href = `${localizePath('/properties/', lang)}#compare`;
+---
+
+<div
+  id="compare-tray"
+  hidden
+  class="fixed inset-x-0 bottom-0 z-30 border-t border-river-700 bg-river-900/95 text-ivory backdrop-blur"
+  role="region"
+  aria-label={t.label}
+  data-one={t.one}
+  data-two={t.two}
+  data-many={t.many}
+>
+  <div class="container-x flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+    <div class="flex items-center gap-3">
+      <Icon name="compare" class="h-5 w-5 text-bronze-300" />
+      <p data-tray-count class="font-semibold" aria-live="polite"></p>
+    </div>
+    <p data-tray-max hidden role="alert" class="order-last w-full text-sm text-bronze-300 sm:order-none sm:w-auto">{t.max}</p>
+    <div class="flex items-center gap-2">
+      <button type="button" data-tray-clear class="btn px-4 text-sand hover:bg-white/10">{t.clear}</button>
+      <a href={href} class="btn-primary px-5">{t.go}</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { bindCompareInputs, getSelection, setSelection } from '../scripts/compare';
+
+  const tray = document.getElementById('compare-tray');
+  if (tray) {
+    const count = tray.querySelector<HTMLElement>('[data-tray-count]');
+    const max = tray.querySelector<HTMLElement>('[data-tray-max]');
+    let maxTimer: number | undefined;
+    const render = () => {
+      const n = getSelection().length;
+      tray.hidden = n === 0 && (max?.hidden ?? true);
+      if (count) {
+        count.textContent =
+          n === 1 ? tray.dataset.one || '' : n === 2 ? tray.dataset.two || '' : (tray.dataset.many || '').replace('{n}', String(n));
+      }
+      document.body.style.paddingBottom = tray.hidden ? '' : `${tray.offsetHeight}px`;
+    };
+    window.addEventListener('compare:change', render);
+    window.addEventListener('compare:max', () => {
+      if (!max) return;
+      max.hidden = false;
+      render();
+      window.clearTimeout(maxTimer);
+      maxTimer = window.setTimeout(() => {
+        max.hidden = true;
+        render();
+      }, 6000);
+    });
+    tray.querySelector('[data-tray-clear]')?.addEventListener('click', () => {
+      setSelection([]);
+      document.getElementById('main')?.focus();
+    });
+    window.addEventListener('resize', render);
+    bindCompareInputs();
+    render();
+  }
+</script>

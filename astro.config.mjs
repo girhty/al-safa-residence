@@ -1,17 +1,21 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
-// https://astro.build/config
+// NOTE: `site` is a placeholder domain (غير مكتمل / unconfigured).
+// Replace with the real production domain before launch so canonical,
+// hreflang, Open Graph and sitemap URLs are correct.
 export default defineConfig({
   base: '/al-safa-residence/',
+  site: 'https://al-safa-residence.example.com',
   output: 'static',
-  integrations: [tailwind()],
+  trailingSlash: 'ignore',
   build: {
-    inlineStylesheets: 'auto'
+    format: 'directory',
+    inlineStylesheets: 'auto',
   },
-  vite: {
-    build: {
-      chunkSizeWarningLimit: 1500
-    }
-  }
+  integrations: [tailwind({ applyBaseStyles: false })],
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: 'hover',
+  },
 });

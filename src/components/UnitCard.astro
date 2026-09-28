@@ -1,0 +1,70 @@
+---
+import SmartImage from './SmartImage.astro';
+import Icon from './Icon.astro';
+import { mediaById } from '../data/media';
+import { unitDisplay, type Unit } from '../data/units';
+import { localizePath, type Lang } from '../i18n/ui';
+
+interface Props { unit: Unit; lang: Lang }
+const { unit, lang } = Astro.props;
+const img = mediaById(unit.imageIds[0]);
+const d = unitDisplay(unit, lang);
+const href = localizePath(`/properties/${unit.slug}/`, lang);
+const c = {
+  ar: { size: 'المساحة', rooms: 'الغرف', floor: 'الطابق', price: 'السعر', details: 'التفاصيل', compare: 'قارن', compareSr: `أضف ${d.name} إلى المقارنة`, projectPhoto: 'صورة للمشروع' },
+  en: { size: 'Size', rooms: 'Rooms', floor: 'Floor', price: 'Price', details: 'View details', compare: 'Compare', compareSr: `Add ${d.name} to comparison`, projectPhoto: 'Project photo' },
+}[lang];
+const titleId = `unit-${unit.id}-title`;
+---
+
+<article class="card flex h-full flex-col overflow-hidden transition-shadow hover:shadow-soft" aria-labelledby={titleId}>
+  {img && (
+    <div class="relative">
+      <SmartImage
+        src={img.src}
+        srcset={img.srcset}
+        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+        alt={`${c.projectPhoto} — ${img.alt[lang]}`}
+        width={img.width}
+        height={img.height}
+        ratio="4/3"
+        lang={lang}
+      />
+      <span class="absolute start-3 top-3 rounded-full bg-ivory/95 px-3 py-1 text-xs font-semibold text-river shadow-sm">{d.status}</span>
+      <span class="absolute bottom-3 end-3 rounded-full bg-river-900/85 px-3 py-1 text-xs text-ivory">{c.projectPhoto}</span>
+    </div>
+  )}
+  <div class="flex flex-1 flex-col p-5 sm:p-6">
+    <p class="eyebrow">{d.type}</p>
+    <h3 id={titleId} class="mt-1 text-xl font-bold">{d.name}</h3>
+    <dl class="mt-4 grid grid-cols-3 gap-2 text-sm">
+      <div class="rounded-2xl bg-sand-50 p-3">
+        <dt class="flex items-center gap-1 text-ink/75"><Icon name="ruler" class="h-4 w-4" />{c.size}</dt>
+        <dd class="mt-0.5 font-semibold text-river"><bdi>{d.size}</bdi></dd>
+      </div>
+      <div class="rounded-2xl bg-sand-50 p-3">
+        <dt class="flex items-center gap-1 text-ink/75"><Icon name="bed" class="h-4 w-4" />{c.rooms}</dt>
+        <dd class="mt-0.5 font-semibold text-river"><bdi>{d.rooms}</bdi></dd>
+      </div>
+      <div class="rounded-2xl bg-sand-50 p-3">
+        <dt class="flex items-center gap-1 text-ink/75"><Icon name="layers" class="h-4 w-4" />{c.floor}</dt>
+        <dd class="mt-0.5 font-semibold text-river"><bdi>{d.floor}</bdi></dd>
+      </div>
+    </dl>
+    <p class="mt-4 flex items-center gap-2 text-sm text-ink/80">
+      <Icon name="tag" class="h-4 w-4 text-bronze" />
+      {c.price}: <strong class="text-river"><bdi>{d.price}</bdi></strong>
+    </p>
+    <div class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-sand pt-5">
+      <label class="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full px-2 font-medium text-river hover:bg-river/5">
+        <input type="checkbox" data-compare-id={unit.id} class="h-5 w-5 rounded accent-[#95601F]" />
+        <span aria-hidden="true">{c.compare}</span>
+        <span class="sr-only">{c.compareSr}</span>
+      </label>
+      <a href={href} class="btn-dark px-5">
+        {c.details}<span class="sr-only">: {d.name}</span>
+        <Icon name="arrow" class="h-5 w-5 rtl:-scale-x-100" />
+      </a>
+    </div>
+  </div>
+</article>

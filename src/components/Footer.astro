@@ -1,65 +1,103 @@
 ---
 import Logo from './Logo.astro';
-import { contact, instagram, places } from '../data/site';
+import Icon from './Icon.astro';
+import { business } from '../data/site';
+import { localizePath, formatNumber, ui, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; path: string }
+const { lang, path } = Astro.props;
+const t = ui[lang];
+const L = (p: string) => localizePath(p, lang);
+const other: Lang = lang === 'ar' ? 'en' : 'ar';
+const links = [
+  { href: '/', label: t.nav.home },
+  { href: '/properties/', label: t.nav.properties },
+  { href: '/gallery/', label: t.nav.gallery },
+  { href: '/about/', label: t.nav.about },
+  { href: '/contact/', label: t.nav.contact },
+  { href: '/accessibility/', label: t.footer.a11y },
+];
 const year = new Date().getFullYear();
 ---
 
-<footer class="relative overflow-hidden border-t border-gold/20 bg-obsidian pb-28 pt-20" aria-labelledby="footer-title">
-  <div class="gold-line absolute inset-x-0 top-0 h-px"></div>
-  <div class="mx-auto max-w-7xl px-5 lg:px-8">
-    <div class="grid gap-12 lg:grid-cols-12">
-      <div class="lg:col-span-4">
-        <div class="flex items-center gap-4">
-          <Logo size={64} eager={false} />
-          <div>
-            <p id="footer-title" class="font-display text-sm font-bold tracking-[0.3em]">AL SAFA</p>
-            <p class="font-mono text-[10px] tracking-[0.3em] text-gold">RESIDENCE · BASRAH</p>
-          </div>
-        </div>
-        <p class="mt-6 font-arabic text-lg leading-8 text-marble/80" dir="rtl" lang="ar">مجمع الصفا السكني<br />حيث رفاهية السكن لمستقبل أفضل</p>
-        <div class="mt-6 flex items-center gap-3">
-          <span class="font-display text-2xl font-bold text-gold">{places.rating.toFixed(1)}</span>
-          <span class="text-gold" aria-hidden="true">★★★★★</span>
-          <span class="font-mono text-[10px] tracking-[0.2em] text-marble/50">GOOGLE</span>
-        </div>
+<footer class="bg-river-900 text-sand" aria-labelledby="footer-heading">
+  <h2 id="footer-heading" class="sr-only">{t.footer.heading}</h2>
+  <div class="container-x grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <div class="flex items-center gap-3">
+        <Logo class="h-12 w-12" />
+        <p class="font-display text-xl font-bold text-ivory">{t.siteName}</p>
       </div>
-
-      {
-        contact.branches.map((b) => (
-          <div class="lg:col-span-3">
-            <p class="font-mono text-[10px] tracking-[0.3em] text-gold">{b.name.toUpperCase()}</p>
-            <p class="mt-1 font-arabic text-xs text-marble/50" dir="rtl" lang="ar">{b.nameAr}</p>
-            <address class="mt-4 not-italic">
-              <p class="text-sm text-marble/80">{b.address}</p>
-              <p class="mt-1 font-arabic text-sm text-marble/50" dir="rtl" lang="ar">{b.addressAr}</p>
-              <ul class="mt-4 space-y-1 font-mono text-sm">
-                {b.phones.map((p) => (
-                  <li>
-                    <a href={`tel:${p.tel}`} class="text-marble/80 transition hover:text-gold">{p.display}</a>
-                  </li>
-                ))}
-              </ul>
-            </address>
-          </div>
-        ))
-      }
-
-      <div class="lg:col-span-2">
-        <p class="font-mono text-[10px] tracking-[0.3em] text-gold">CONNECT</p>
-        <ul class="mt-4 space-y-3 text-sm">
-          <li><a href={contact.instagramUrl} target="_blank" rel="noopener noreferrer" class="text-marble/80 hover:text-gold">Instagram · @{instagram.username}</a></li>
-          <li><a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" class="text-marble/80 hover:text-gold">WhatsApp</a></li>
-          <li><a href={contact.directionsUrl} target="_blank" rel="noopener noreferrer" class="text-marble/80 hover:text-gold">Directions</a></li>
-          <li><a href="#inquiry" class="text-marble/80 hover:text-gold">Private Viewing</a></li>
-        </ul>
-        <p class="mt-6 font-mono text-[11px] text-marble/50">{contact.hoursLong}</p>
-      </div>
+      <p class="mt-4 max-w-sm">{t.footer.about}</p>
+      <p class="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-ivory">
+        <Icon name="star" filled class="h-4 w-4 text-bronze-300" />
+        <bdi>{formatNumber(business.rating, lang)}</bdi>
+        <span>{lang === 'ar' ? `على Google (${formatNumber(business.reviewCount, lang)} مراجعات)` : `on Google (${business.reviewCount} reviews)`}</span>
+      </p>
     </div>
 
-    <div class="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row sm:items-center">
-      <p class="font-mono text-[10px] tracking-[0.2em] text-marble/40">© {year} AL SAFA RESIDENCE · مجمع الصفا السكني · ALL RIGHTS RESERVED</p>
-      <p class="font-mono text-[10px] tracking-[0.2em] text-marble/40">#حياة_تستحقها · #MEC</p>
+    <nav aria-labelledby="footer-links" class="lg:col-span-2">
+      <h3 id="footer-links" class="text-base font-bold text-ivory">{t.footer.quick}</h3>
+      <ul class="mt-4 space-y-1" role="list">
+        {links.map((l) => (
+          <li><a href={L(l.href)} class="inline-flex min-h-[44px] items-center hover:text-ivory hover:underline">{l.label}</a></li>
+        ))}
+        <li>
+          <a href={localizePath(path, other)} hreflang={other} lang={other} data-lang-switch class="inline-flex min-h-[44px] items-center hover:text-ivory hover:underline">{t.langSwitch}</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="lg:col-span-3">
+      <h3 class="text-base font-bold text-ivory">{t.footer.contact}</h3>
+      <ul class="mt-4 space-y-5" role="list">
+        {business.branches.map((b) => (
+          <li>
+            <p class="font-semibold text-ivory">{b.name[lang]}</p>
+            <p class="text-sm">{b.address[lang]}</p>
+            <ul class="mt-1 flex flex-wrap gap-x-4" role="list">
+              {b.phones.map((p) => (
+                <li>
+                  <a href={`tel:${p.tel}`} class="inline-flex min-h-[44px] items-center gap-1.5 hover:text-ivory hover:underline">
+                    <Icon name="phone" class="h-4 w-4" />
+                    <bdi dir="ltr">{p.display}</bdi>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="lg:col-span-3">
+      <h3 class="text-base font-bold text-ivory">{t.footer.hours}</h3>
+      <p class="mt-4 flex items-start gap-2"><Icon name="clock" class="mt-1 h-5 w-5 shrink-0" />{business.hours[lang]}</p>
+      <p class="mt-1 text-sm text-sand/90">{business.hoursNote[lang]}</p>
+
+      <h3 class="mt-8 text-base font-bold text-ivory">{t.footer.email}</h3>
+      <p class="mt-2 flex items-center gap-2">
+        <Icon name="mail" class="h-5 w-5" />
+        <span class="rounded-md border border-dashed border-sand/60 px-2 py-0.5 text-sm">{t.unconfigured}</span>
+      </p>
+
+      <h3 class="mt-8 text-base font-bold text-ivory">{t.footer.follow}</h3>
+      <a
+        href={business.instagram.url}
+        target="_blank"
+        rel="noopener"
+        class="mt-2 inline-flex min-h-[44px] items-center gap-2 hover:text-ivory hover:underline"
+        aria-label={lang === 'ar' ? 'حساب مجمع الصفا السكني على إنستغرام (يفتح في نافذة جديدة)' : 'Al Safa Residence on Instagram (opens in a new tab)'}
+      >
+        <Icon name="instagram" class="h-5 w-5" />
+        <bdi dir="ltr">@{business.instagram.handle}</bdi>
+      </a>
     </div>
   </div>
-  <p class="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-display text-[16vw] font-bold leading-none text-white/[0.025]" aria-hidden="true">AL SAFA</p>
+  <div class="border-t border-white/10">
+    <div class="container-x flex flex-col gap-2 py-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+      <p>© <bdi>{year}</bdi> {t.siteName}. {t.footer.rights}</p>
+      <p class="text-sand/90">{t.footer.sourceNote}</p>
+    </div>
+  </div>
 </footer>

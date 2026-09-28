@@ -1,0 +1,72 @@
+---
+import { ui, type Lang } from '../i18n/ui';
+
+interface Props {
+  src?: string;
+  srcset?: string;
+  sizes?: string;
+  alt: string;
+  width: number;
+  height: number;
+  lang?: Lang;
+  class?: string;
+  imgClass?: string;
+  /** override aspect ratio, e.g. "1/1" */
+  ratio?: string;
+  /** absolutely fill parent instead of using aspect ratio */
+  fill?: boolean;
+  eager?: boolean;
+  priority?: boolean;
+  tone?: 'light' | 'dark';
+  /** show alt text visibly on error (default) — false keeps it for screen readers only */
+  fallbackText?: boolean;
+}
+
+const {
+  src,
+  srcset,
+  sizes,
+  alt,
+  width,
+  height,
+  lang = 'ar',
+  class: cls = '',
+  imgClass = '',
+  ratio,
+  fill = false,
+  eager = false,
+  priority = false,
+  tone = 'light',
+  fallbackText = true,
+} = Astro.props;
+const style = fill ? undefined : `aspect-ratio:${ratio ?? `${width}/${height}`}`;
+---
+
+{src && (
+  <span
+    class:list={['smart-img relative block overflow-hidden', tone === 'dark' && 'smart-img--dark', fill && 'absolute inset-0', cls]}
+    data-state="loading"
+    style={style}
+  >
+    <img
+      src={src}
+      srcset={srcset}
+      sizes={srcset ? sizes ?? '100vw' : undefined}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding={eager ? 'sync' : 'async'}
+      fetchpriority={priority ? 'high' : undefined}
+      referrerpolicy="no-referrer"
+      class:list={['h-full w-full object-cover', imgClass]}
+      onload="this.parentElement.dataset.state='loaded'"
+      onerror="this.parentElement.dataset.state='error'"
+    />
+    <span class="smart-img__fallback">
+      <svg viewBox="0 0 24 24" class="h-8 w-8 opacity-70" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v16H4z M4 16l5-5 4 4 3-3 4 4 M15 9h.01"></path></svg>
+      <span class="font-semibold">{ui[lang].imgUnavailable}</span>
+      <span class:list={[fallbackText ? 'line-clamp-3 max-w-xs' : 'sr-only']}>{alt}</span>
+    </span>
+  </span>
+)}

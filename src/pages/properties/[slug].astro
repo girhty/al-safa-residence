@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SmartImage from '../../components/SmartImage.astro';
+import Icon from '../../components/Icon.astro';
+import InquiryForm from '../../components/InquiryForm.astro';
+import UnitCard from '../../components/UnitCard.astro';
+import { units, unitDisplay, type Unit } from '../../data/units';
+import { mediaById, type Media } from '../../data/media';
+import { business, SITE_URL } from '../../data/site';
+import { localizePath, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return units.map((unit) => ({ params: { slug: unit.slug }, props: { unit } }));
+}
+
+const { unit, lang = 'ar' } = Astro.props as { unit: Unit; lang?: Lang };
+const d = unitDisplay(unit, lang);
+const L = (p: string) => localizePath(p, lang);
+const path = `/properties/${unit.slug}/`;
+const images = unit.imageIds.map((id) => mediaById(id)).filter
