@@ -1,0 +1,463 @@
+---
+const filters = [
+  {
+    id: 'all',
+    zone: 'overview',
+    cat: '',
+    label: 'All Zones',
+    title: 'The Complete Master Plan',
+    desc: 'A riverside city of faceted towers, sky villas, landscaped courts and a retail promenade — orchestrated around a hexagonal central park on the Shatt Al-Arab.',
+    specs: [
+      ['Setting', 'Shatt Al-Arab · Al-Beban'],
+      ['Heart', 'Hexagonal central park'],
+      ['Edge', 'Riverfront promenade']
+    ]
+  },
+  {
+    id: 'villas',
+    zone: 'villas',
+    cat: 'villas',
+    label: 'Sky Villas',
+    title: 'Sky Villas Quarter',
+    desc: 'Stepped, terraced volumes with private outdoor rooms — the privacy of a villa with the services of a tower community.',
+    specs: [
+      ['Typology', 'Terraced sky villas'],
+      ['Outdoor', 'Private terraces'],
+      ['Adjacent', 'Infinity pool court']
+    ]
+  },
+  {
+    id: 'penthouses',
+    zone: 'penthouses',
+    cat: 'penthouses',
+    label: 'Penthouses',
+    title: 'Sky Crown Penthouses',
+    desc: 'Gold-crowned hex-prism towers housing the most exclusive residences, with double-height salons and uninterrupted river panoramas.',
+    specs: [
+      ['Typology', 'Crown penthouses'],
+      ['Ceilings', 'Double-height salons'],
+      ['Views', '360° panoramas']
+    ]
+  },
+  {
+    id: 'towers',
+    zone: 'towers',
+    cat: 'towers',
+    label: 'Tower Residences',
+    title: 'Residential Tower Cluster',
+    desc: 'A choreographed cluster of sculpted towers offering light-filled family apartments with flexible bank-financed ownership.',
+    specs: [
+      ['Typology', 'Family apartments'],
+      ['Financing', 'Rafidain · TBI loans'],
+      ['Amenity', 'Landscaped podiums']
+    ]
+  },
+  {
+    id: 'retail',
+    zone: 'retail',
+    cat: 'retail',
+    label: 'Retail Promenade',
+    title: 'Retail Promenade',
+    desc: 'A shaded boulevard of cafés, boutiques and everyday conveniences linking the park, the pools and the riverfront.',
+    specs: [
+      ['Character', 'Walkable boulevard'],
+      ['Program', 'Cafés · boutiques'],
+      ['Link', 'Park to river']
+    ]
+  }
+];
+
+const bands = [
+  { id: 'penthouse', range: 'L29 — L32', label: 'Sky Crown Penthouses', floors: 4 },
+  { id: 'skyvilla', range: 'L19 — L28', label: 'Sky Villas', floors: 10 },
+  { id: 'residence', range: 'L05 — L18', label: 'Tower Residences', floors: 14 }
+];
+
+type Room = { x: number; y: number; w: number; h: number; label: string; glass?: boolean };
+type Hotspot = { x: number; y: number; t: string; s: string };
+const plans: Record<string, { name: string; area: string; rooms: Room[]; hotspots: Hotspot[] }> = {
+  residence: {
+    name: 'Tower Residence · 2 Bedroom',
+    area: '≈ 145 m² · indicative',
+    rooms: [
+      { x: 20, y: 20, w: 260, h: 200, label: 'LIVING & DINING' },
+      { x: 280, y: 20, w: 160, h: 120, label: 'KITCHEN' },
+      { x: 280, y: 140, w: 160, h: 80, label: 'POWDER · STORE' },
+      { x: 440, y: 20, w: 140, h: 200, label: 'BALCONY', glass: true },
+      { x: 20, y: 220, w: 220, h: 160, label: 'MASTER SUITE' },
+      { x: 240, y: 220, w: 120, h: 160, label: 'EN-SUITE' },
+      { x: 360, y: 220, w: 220, h: 160, label: 'BEDROOM 2' }
+    ],
+    hotspots: [
+      { x: 150, y: 115, t: 'Living Floor', s: 'Large-format marble-effect porcelain slabs, satin finish, seamless thresholds.' },
+      { x: 360, y: 80, t: 'Kitchen', s: 'Quartz worktops, integrated appliances and handleless lacquer joinery.' },
+      { x: 510, y: 120, t: 'Façade Glazing', s: 'Floor-to-ceiling double glazing with bronze-tone frames and solar control.' },
+      { x: 130, y: 300, t: 'Master Suite', s: 'Engineered oak flooring, walk-in wardrobe and layered blackout drapery.' },
+      { x: 300, y: 300, t: 'En-suite', s: 'Stone-look vanity, rain shower and brushed-gold fixtures.' }
+    ]
+  },
+  skyvilla: {
+    name: 'Sky Villa · 3 Bedroom Duplex',
+    area: '≈ 240 m² · indicative',
+    rooms: [
+      { x: 20, y: 20, w: 300, h: 180, label: 'GRAND SALON' },
+      { x: 320, y: 20, w: 140, h: 180, label: 'DINING' },
+      { x: 460, y: 20, w: 120, h: 360, label: 'SKY TERRACE', glass: true },
+      { x: 20, y: 200, w: 160, h: 180, label: 'MASTER SUITE' },
+      { x: 180, y: 200, w: 110, h: 180, label: 'BATH' },
+      { x: 290, y: 200, w: 170, h: 90, label: 'BEDROOM 2' },
+      { x: 290, y: 290, w: 170, h: 90, label: 'BEDROOM 3' }
+    ],
+    hotspots: [
+      { x: 170, y: 110, t: 'Grand Salon', s: 'Double-height volume with feature stone wall and concealed linear lighting.' },
+      { x: 390, y: 110, t: 'Dining', s: 'Statement pendant zone with oak-veneer ceiling detailing.' },
+      { x: 520, y: 200, t: 'Sky Terrace', s: 'Frameless glass balustrade, porcelain outdoor decking and planter edges.' },
+      { x: 100, y: 290, t: 'Master Suite', s: 'Upholstered wall panelling, dressing room and river-facing glazing.' },
+      { x: 375, y: 245, t: 'Smart Home', s: 'Scene-based lighting, climate and blinds control from wall panels or mobile.' }
+    ]
+  },
+  penthouse: {
+    name: 'Sky Crown Penthouse · 4 Bedroom',
+    area: '≈ 380 m² · indicative',
+    rooms: [
+      { x: 20, y: 20, w: 340, h: 200, label: 'PANORAMIC SALON' },
+      { x: 360, y: 20, w: 120, h: 120, label: 'CHEF KITCHEN' },
+      { x: 360, y: 140, w: 120, h: 80, label: 'MAJLIS' },
+      { x: 480, y: 20, w: 100, h: 360, label: 'WRAP TERRACE', glass: true },
+      { x: 20, y: 220, w: 200, h: 160, label: 'OWNER’S SUITE' },
+      { x: 220, y: 220, w: 100, h: 160, label: 'SPA BATH' },
+      { x: 320, y: 220, w: 160, h: 80, label: 'BEDROOM 2' },
+      { x: 320, y: 300, w: 160, h: 80, label: 'BEDROOMS 3 · 4' }
+    ],
+    hotspots: [
+      { x: 190, y: 120, t: 'Panoramic Salon', s: 'Double-height glazing framing the Shatt Al-Arab, book-matched stone feature.' },
+      { x: 420, y: 80, t: 'Chef Kitchen', s: 'Island with waterfall quartz edge, premium integrated appliances, pantry.' },
+      { x: 420, y: 180, t: 'Majlis', s: 'Dedicated reception room for family and guests with bespoke joinery.' },
+      { x: 530, y: 200, t: 'Wrap Terrace', s: 'Private wraparound terrace with frameless glass and ambient lighting.' },
+      { x: 270, y: 300, t: 'Spa Bath', s: 'Freestanding tub, stone surfaces and brushed-gold fittings.' }
+    ]
+  }
+};
+---
+
+<section id="masterplan" class="relative overflow-hidden bg-obsidian py-24 lg:py-32" aria-labelledby="masterplan-title">
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-gold/10 blur-[120px]" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+      <div>
+        <p class="eyebrow reveal">02 — Interactive Master Plan</p>
+        <h2 id="masterplan-title" class="headline reveal mt-6 text-[clamp(1.7rem,4vw,3.3rem)] font-bold" style="--d:80ms">
+          Explore the <span class="text-gold-gradient">city</span>
+        </h2>
+      </div>
+      <p class="reveal max-w-md font-serif text-lg italic text-marble/60" style="--d:140ms">
+        Drag to orbit. Filter by residence type or tap a tower to fly in. Every zone is rendered live in 3D.
+      </p>
+    </div>
+
+    <div data-plan data-filters={JSON.stringify(filters)} class="mt-14 grid gap-6 lg:grid-cols-12">
+      <!-- Filters + info -->
+      <div class="flex flex-col gap-6 lg:col-span-4">
+        <div role="group" aria-label="Filter master plan" class="flex flex-wrap gap-2 lg:flex-col">
+          {
+            filters.map((f, i) => (
+              <button
+                type="button"
+                data-filter={f.id}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                class="group flex items-center justify-between gap-4 border border-gold/20 bg-charcoal/60 px-4 py-3 text-left transition-all duration-500 hover:border-gold aria-pressed:border-ember aria-pressed:bg-ember/10 lg:px-5 lg:py-4"
+              >
+                <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-marble/80 group-aria-pressed:text-ember lg:text-[11px]">{f.label}</span>
+                <span class="hidden h-2 w-2 rotate-45 border border-gold/60 transition group-aria-pressed:bg-ember lg:block" />
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="glass clip-chamfer flex-1 p-6 lg:p-7" aria-live="polite">
+          <p class="font-mono text-[10px] tracking-[0.3em] text-gold">ZONE PROFILE</p>
+          <h3 class="mt-3 font-display text-lg font-bold uppercase tracking-[0.12em]" data-plan-title>{filters[0].title}</h3>
+          <p class="mt-3 font-serif text-lg leading-relaxed text-marble/70" data-plan-desc>{filters[0].desc}</p>
+          <dl class="mt-6 space-y-3 font-mono text-xs" data-plan-specs>
+            {
+              filters[0].specs.map(([k, v]) => (
+                <div class="flex justify-between gap-4 border-b border-white/5 pb-2">
+                  <dt class="uppercase tracking-[0.2em] text-marble/50">{k}</dt>
+                  <dd class="text-right text-gold-light">{v}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+
+      <!-- 3D explorer -->
+      <div class="relative lg:col-span-8">
+        <div class="clip-chamfer relative h-[440px] overflow-hidden border border-gold/25 bg-obsidian sm:h-[520px] lg:h-full lg:min-h-[560px]">
+          <div data-plan-canvas class="skeleton absolute inset-0" aria-label="Interactive 3D master plan" role="img"></div>
+          <div class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-4 font-mono text-[10px] tracking-[0.25em] text-marble/60">
+            <span class="glass-dark px-3 py-1.5">3D EXPLORER · LIVE</span>
+            <span class="glass-dark hidden px-3 py-1.5 sm:inline">DRAG · TAP A TOWER</span>
+          </div>
+          <div class="absolute bottom-4 right-4 flex flex-col gap-2">
+            <button type="button" data-zoom="in" class="glass-dark flex h-10 w-10 items-center justify-center text-gold transition hover:text-ember" aria-label="Zoom in">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            </button>
+            <button type="button" data-zoom="out" class="glass-dark flex h-10 w-10 items-center justify-center text-gold transition hover:text-ember" aria-label="Zoom out">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14"></path></svg>
+            </button>
+          </div>
+          <p data-plan-fallback class="absolute inset-0 hidden items-center justify-center p-8 text-center font-serif text-lg text-marble/60">
+            3D view requires WebGL. Please use a modern browser to explore the master plan.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tower Finder -->
+    <div data-finder class="mt-24 grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow reveal">Tower Finder</p>
+        <h3 class="headline reveal mt-5 text-2xl font-bold sm:text-3xl" style="--d:80ms">Select a <span class="text-gold-gradient">floor</span></h3>
+        <p class="reveal mt-4 font-serif text-lg text-marble/60" style="--d:120ms">Choose a level band to unlock its interior layout, then explore hotspots for finishes and material specifications.</p>
+
+        <div class="reveal mt-8 flex gap-4" style="--d:160ms">
+          <!-- stylised tower stack -->
+          <div class="flex w-full flex-col gap-1.5" role="group" aria-label="Floor bands">
+            <div class="mx-auto h-6 w-0 border-x-[18px] border-b-[24px] border-x-transparent border-b-gold/80" aria-hidden="true"></div>
+            {
+              bands.map((b) => (
+                <button
+                  type="button"
+                  data-band={b.id}
+                  aria-pressed="false"
+                  class="group relative flex w-full items-center justify-between overflow-hidden border border-gold/25 bg-charcoal/70 px-4 text-left transition-all duration-500 hover:border-gold aria-pressed:border-ember aria-pressed:bg-ember/10"
+                  style={`min-height:${Math.max(56, b.floors * 7)}px`}
+                >
+                  <span
+                    class="pointer-events-none absolute inset-0 opacity-40"
+                    style="background-image:repeating-linear-gradient(to bottom, transparent 0 6px, rgba(212,175,55,0.18) 6px 7px)"
+                  />
+                  <span class="relative">
+                    <span class="block font-mono text-[10px] tracking-[0.25em] text-gold group-aria-pressed:text-ember">{b.range}</span>
+                    <span class="mt-1 block font-display text-[11px] font-bold uppercase tracking-[0.14em] text-marble">{b.label}</span>
+                  </span>
+                  <svg class="relative h-4 w-4 text-gold/70 transition group-hover:translate-x-1 group-aria-pressed:text-ember" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                </button>
+              ))
+            }
+            <div class="flex min-h-[44px] items-center justify-between border border-white/10 bg-charcoal/40 px-4 text-left">
+              <span>
+                <span class="block font-mono text-[10px] tracking-[0.25em] text-marble/40">L01 — L04</span>
+                <span class="mt-1 block font-display text-[11px] uppercase tracking-[0.14em] text-marble/50">Amenity & Retail Podium</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floorplan viewer -->
+      <div class="lg:col-span-8">
+        <div class="clip-chamfer relative overflow-hidden border border-gold/25 bg-charcoal p-5 sm:p-8">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p class="font-mono text-[10px] tracking-[0.3em] text-gold">INTERIOR LAYOUT</p>
+              <p class="mt-2 font-display text-sm font-bold uppercase tracking-[0.12em]" data-plan-name>{plans.residence.name}</p>
+              <p class="mt-1 font-mono text-[11px] text-marble/50" data-plan-area>{plans.residence.area}</p>
+            </div>
+            <button type="button" data-view-toggle aria-pressed="true" class="btn-ghost !px-4 !py-2.5 !text-[10px]">
+              <span data-view-label>2D Plan</span>
+            </button>
+          </div>
+
+          <div class="relative mt-6">
+            {
+              Object.entries(plans).map(([key, plan]) => (
+                <div data-plan-view={key} class={key === 'residence' ? '' : 'hidden'}>
+                  <div class="relative mx-auto aspect-[3/2] w-full max-w-3xl [perspective:1600px]">
+                    <div data-plan-stage class="plan-stage is-3d absolute inset-0">
+                      <svg viewBox="0 0 600 400" class="absolute inset-0 h-full w-full" aria-hidden="true">
+                        <rect x="0" y="0" width="600" height="400" fill="#0E0E10" />
+                        {plan.rooms.map((r) => (
+                          <g>
+                            <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={r.glass ? 'rgba(212,175,55,0.07)' : 'rgba(255,255,255,0.025)'} stroke="#D4AF37" stroke-opacity="0.25" />
+                            <text x={r.x + r.w / 2} y={r.y + r.h / 2} fill="#F7F7F5" fill-opacity="0.55" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" text-anchor="middle" dominant-baseline="middle">
+                              {r.label}
+                            </text>
+                          </g>
+                        ))}
+                      </svg>
+                      <svg viewBox="0 0 600 400" class="pointer-events-none absolute inset-0 h-full w-full" style="transform:translateZ(10px)" aria-hidden="true">
+                        {plan.rooms.map((r) => (
+                          <rect x={r.x} y={r.y} width={r.w} height={r.h} fill="none" stroke="#B87333" stroke-opacity="0.35" stroke-width="3" />
+                        ))}
+                      </svg>
+                      <svg viewBox="0 0 600 400" class="pointer-events-none absolute inset-0 h-full w-full" style="transform:translateZ(22px)" aria-hidden="true">
+                        {plan.rooms.map((r) => (
+                          <rect x={r.x} y={r.y} width={r.w} height={r.h} fill="none" stroke="#D4AF37" stroke-width={r.glass ? 1.5 : 3} stroke-dasharray={r.glass ? '6 5' : undefined} />
+                        ))}
+                      </svg>
+                      {plan.hotspots.map((h, i) => (
+                        <button
+                          type="button"
+                          data-hotspot
+                          data-title={h.t}
+                          data-spec={h.s}
+                          aria-label={`${h.t} specification`}
+                          aria-pressed={i === 0 ? 'true' : 'false'}
+                          class="group absolute flex h-8 w-8 items-center justify-center"
+                          style={`left:${(h.x / 600) * 100}%;top:${(h.y / 400) * 100}%;transform:translate(-50%,-50%) translateZ(34px)`}
+                        >
+                          <span class="absolute h-8 w-8 animate-pulse-ring rounded-full bg-ember/40" />
+                          <span class="clip-hex relative flex h-7 w-7 items-center justify-center bg-gold font-mono text-[10px] font-bold text-obsidian transition group-hover:bg-ember group-aria-pressed:bg-ember">
+                            {i + 1}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+
+            <!-- Locked overlay -->
+            <div data-plan-lock class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-charcoal/85 text-center backdrop-blur-sm transition-opacity duration-700">
+              <svg class="h-10 w-10 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+              <p class="mt-4 font-display text-xs font-bold tracking-[0.3em]">SELECT A FLOOR BAND</p>
+              <p class="mt-2 max-w-xs font-serif text-lg text-marble/60">to unlock the interior floorplan</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid gap-4 border-t border-gold/15 pt-6 sm:grid-cols-[auto,1fr] sm:items-start" aria-live="polite">
+            <p class="font-mono text-[10px] tracking-[0.3em] text-ember">SPEC · <span data-spec-title>Living Floor</span></p>
+            <p class="font-serif text-lg leading-relaxed text-marble/75" data-spec-text>{plans.residence.hotspots[0].s}</p>
+          </div>
+          <p class="mt-4 font-mono text-[10px] tracking-[0.15em] text-marble/35">Layouts, areas and specifications are indicative and for illustration only. Final details per sales agreement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ planMeta: Object.fromEntries(Object.entries(plans).map(([k, p]) => [k, { name: p.name, area: p.area }])) }}>
+  window.__alsafaPlanMeta = planMeta;
+</script>
+
+<script>
+  import { createCity, type Category, type ZoneKey } from '../scripts/city';
+
+  type Filter = { id: string; zone: string; cat: string; label: string; title: string; desc: string; specs: string[][] };
+
+  const root = document.querySelector<HTMLElement>('[data-plan]');
+  if (root) {
+    const filters: Filter[] = JSON.parse(root.dataset.filters || '[]');
+    const wrap = root.querySelector<HTMLElement>('[data-plan-canvas]')!;
+    const btns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    const titleEl = root.querySelector('[data-plan-title]')!;
+    const descEl = root.querySelector('[data-plan-desc]')!;
+    const specsEl = root.querySelector('[data-plan-specs]')!;
+    let city: ReturnType<typeof createCity> = null;
+
+    const activate = (id: string) => {
+      const f = filters.find((x) => x.id === id) || filters[0];
+      btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f.id)));
+      titleEl.textContent = f.title;
+      descEl.textContent = f.desc;
+      specsEl.innerHTML = f.specs
+        .map(
+          ([k, v]) =>
+            `<div class="flex justify-between gap-4 border-b border-white/5 pb-2"><dt class="uppercase tracking-[0.2em] text-marble/50">${k}</dt><dd class="text-right text-gold-light">${v}</dd></div>`
+        )
+        .join('');
+      city?.highlight((f.cat || null) as Category | null);
+      city?.focus(f.zone as ZoneKey);
+    };
+
+    // Lazy-init the 3D explorer when near viewport
+    const init = () => {
+      city = createCity(wrap, {
+        autoRotate: true,
+        onSelect: (cat) => {
+          const f = filters.find((x) => x.cat === cat);
+          if (f) {
+            btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f.id)));
+            titleEl.textContent = f.title;
+            descEl.textContent = f.desc;
+            city?.highlight(cat);
+          }
+        },
+        onReady: () => wrap.classList.add('is-loaded')
+      });
+      if (!city) {
+        wrap.classList.add('is-loaded');
+        root.querySelector('[data-plan-fallback]')?.classList.replace('hidden', 'flex');
+      }
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          io.disconnect();
+          init();
+        }
+      },
+      { rootMargin: '300px 0px' }
+    );
+    io.observe(wrap);
+
+    btns.forEach((b) => b.addEventListener('click', () => activate(b.dataset.filter || 'all')));
+    root.querySelector('[data-zoom="in"]')?.addEventListener('click', () => city?.zoom(0.8));
+    root.querySelector('[data-zoom="out"]')?.addEventListener('click', () => city?.zoom(1.25));
+  }
+
+  // Tower finder
+  const finder = document.querySelector<HTMLElement>('[data-finder]');
+  if (finder) {
+    const meta = (window as unknown as { __alsafaPlanMeta: Record<string, { name: string; area: string }> }).__alsafaPlanMeta || {};
+    const bands = Array.from(finder.querySelectorAll<HTMLButtonElement>('[data-band]'));
+    const views = Array.from(finder.querySelectorAll<HTMLElement>('[data-plan-view]'));
+    const lock = finder.querySelector<HTMLElement>('[data-plan-lock]');
+    const nameEl = finder.querySelector('[data-plan-name]');
+    const areaEl = finder.querySelector('[data-plan-area]');
+    const specTitle = finder.querySelector('[data-spec-title]');
+    const specText = finder.querySelector('[data-spec-text]');
+    const toggle = finder.querySelector<HTMLButtonElement>('[data-view-toggle]');
+    const toggleLabel = finder.querySelector('[data-view-label]');
+    let is3d = true;
+
+    const selectHotspot = (view: HTMLElement, hs: HTMLElement) => {
+      view.querySelectorAll('[data-hotspot]').forEach((h) => h.setAttribute('aria-pressed', String(h === hs)));
+      if (specTitle) specTitle.textContent = hs.dataset.title || '';
+      if (specText) specText.textContent = hs.dataset.spec || '';
+    };
+
+    bands.forEach((b) =>
+      b.addEventListener('click', () => {
+        const id = b.dataset.band || 'residence';
+        bands.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        views.forEach((v) => v.classList.toggle('hidden', v.dataset.planView !== id));
+        if (lock) {
+          lock.style.opacity = '0';
+          lock.style.pointerEvents = 'none';
+        }
+        if (nameEl && meta[id]) nameEl.textContent = meta[id].name;
+        if (areaEl && meta[id]) areaEl.textContent = meta[id].area;
+        const view = views.find((v) => v.dataset.planView === id);
+        const first = view?.querySelector<HTMLElement>('[data-hotspot]');
+        if (view && first) selectHotspot(view, first);
+      })
+    );
+
+    views.forEach((view) =>
+      view.querySelectorAll<HTMLElement>('[data-hotspot]').forEach((hs) => hs.addEventListener('click', () => selectHotspot(view, hs)))
+    );
+
+    toggle?.addEventListener('click', () => {
+      is3d = !is3d;
+      toggle.setAttribute('aria-pressed', String(is3d));
+      finder.querySelectorAll('[data-plan-stage]').forEach((s) => s.classList.toggle('is-3d', is3d));
+      if (toggleLabel) toggleLabel.textContent = is3d ? '2D Plan' : '3D View';
+    });
+  }
+</script>

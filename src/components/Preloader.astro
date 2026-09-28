@@ -1,0 +1,56 @@
+---
+import Logo from './Logo.astro';
+---
+
+<div
+  id="preloader"
+  class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-obsidian transition-opacity duration-700"
+  role="status"
+  aria-live="polite"
+  aria-label="Loading Al Safa Residence"
+>
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-40"></div>
+  <div class="relative flex h-40 w-40 items-center justify-center">
+    <svg class="absolute inset-0 h-full w-full animate-spin-slow" viewBox="0 0 100 100" aria-hidden="true">
+      <polygon points="50,2 94,26 94,74 50,98 6,74 6,26" fill="none" stroke="#D4AF37" stroke-width="0.6" stroke-dasharray="4 6"></polygon>
+    </svg>
+    <svg class="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)]" viewBox="0 0 100 100" aria-hidden="true">
+      <polygon points="50,2 94,26 94,74 50,98 6,74 6,26" fill="none" stroke="#B87333" stroke-width="0.8" opacity="0.6"></polygon>
+    </svg>
+    <Logo size={84} />
+  </div>
+  <p class="mt-8 font-display text-[10px] tracking-[0.55em] text-gold">AL SAFA RESIDENCE</p>
+  <p class="mt-2 font-arabic text-sm text-marble/60" dir="rtl" lang="ar">مجمع الصفا السكني</p>
+  <div class="mt-8 h-px w-48 overflow-hidden bg-white/10">
+    <div id="preloader-bar" class="h-full w-0 bg-gradient-to-r from-bronze via-gold to-ember transition-[width] duration-500 ease-out"></div>
+  </div>
+</div>
+<noscript><style>#preloader{display:none!important}</style></noscript>
+
+<script>
+  const pre = document.getElementById('preloader');
+  const bar = document.getElementById('preloader-bar');
+  const t0 = performance.now();
+  let done = false;
+  let prog = 8;
+  const tick = window.setInterval(() => {
+    prog = Math.min(92, prog + Math.random() * 16);
+    if (bar) bar.style.width = prog + '%';
+  }, 180);
+  function hide() {
+    if (done || !pre) return;
+    done = true;
+    window.clearInterval(tick);
+    if (bar) bar.style.width = '100%';
+    const wait = Math.max(0, 900 - (performance.now() - t0));
+    window.setTimeout(() => {
+      pre.style.opacity = '0';
+      pre.style.pointerEvents = 'none';
+      document.documentElement.classList.add('is-loaded');
+      window.setTimeout(() => pre.remove(), 800);
+    }, wait);
+  }
+  window.addEventListener('city-ready', hide, { once: true });
+  window.addEventListener('load', () => window.setTimeout(hide, 500), { once: true });
+  window.setTimeout(hide, 3800);
+</script>

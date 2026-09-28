@@ -1,0 +1,23 @@
+{
+  "name": "al-safa-residence",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Al Safa Residence — مجمع الصفا السكني. Ultra-luxury master-planned residential city on the Shatt Al-Arab, Basrah.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/tailwind": "^5.1.2",
+    "astro": "^4.16.7",
+    "tailwindcss": "^3.4.14",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.169.0"
+  }
+}

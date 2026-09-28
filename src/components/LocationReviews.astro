@@ -1,0 +1,238 @@
+---
+import { places, contact } from '../data/site';
+
+const seen = new Set<string>();
+const reviews = places.reviews.filter((r) => {
+  const k = `${r.author_name}|${r.rating}|${r.text}`;
+  if (seen.has(k)) return false;
+  seen.add(k);
+  return true;
+});
+
+const initials = (n: string) =>
+  n
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+const landmarks = [
+  { name: 'Main Sales Gallery — Al-Beban', type: 'Sales', q: contact.mapsQuery, primary: true },
+  { name: 'Shatt Al-Arab Waterfront', type: 'Waterfront', q: 'Shatt Al-Arab Corniche, Basrah' },
+  { name: 'City Branch — Al-Saadi St. (Bowling Center)', type: 'Sales', q: 'Al Saadi Street, Basrah' },
+  { name: 'Basrah International Fair', type: 'Landmark', q: 'Basrah International Fair Grounds' },
+  { name: 'Basrah City Centre', type: 'Transit', q: 'Basrah City Center, Iraq' },
+  { name: 'Basrah International Airport', type: 'Transit', q: 'Basrah International Airport' }
+];
+const mapLink = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+---
+
+<section id="location" class="marble-bg relative overflow-hidden py-24 text-obsidian lg:py-32" aria-labelledby="location-title">
+  <div class="clip-slice-top pointer-events-none absolute inset-x-0 top-0 h-14 bg-charcoal sm:h-20" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 pt-6 lg:px-8">
+    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+      <div>
+        <p class="eyebrow reveal !text-bronze">04 — Location & Distinction</p>
+        <h2 id="location-title" class="headline reveal mt-6 text-[clamp(1.7rem,4vw,3.3rem)] font-bold" style="--d:80ms">
+          On the banks of<br /><span class="text-gold-gradient">Shatt Al-Arab</span>
+        </h2>
+      </div>
+      <p class="reveal max-w-md font-arabic text-lg text-obsidian/70" dir="rtl" lang="ar" style="--d:140ms">منطقة شط العرب - البيبان، البصرة</p>
+    </div>
+
+    <div class="mt-14 grid gap-6 lg:grid-cols-12">
+      <!-- Map -->
+      <div class="reveal lg:col-span-7" style="--d:100ms">
+        <div class="clip-chamfer relative h-[420px] overflow-hidden border border-gold/40 bg-obsidian sm:h-[520px]">
+          <div class="skeleton absolute inset-0" aria-hidden="true"></div>
+          <iframe
+            title="Map showing Al Safa Residence in Al-Beban, Basrah"
+            src={contact.mapsEmbed}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            class="absolute inset-0 h-full w-full border-0"
+            style="filter: grayscale(1) invert(0.92) sepia(0.6) saturate(1.8) hue-rotate(-12deg) brightness(0.82) contrast(1.15);"
+          ></iframe>
+          <!-- luxe overlays -->
+          <div class="pointer-events-none absolute inset-0 shadow-[inset_0_0_120px_rgba(10,10,10,0.9)]"></div>
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-obsidian/30"></div>
+          <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full" aria-hidden="true">
+            <div class="flex flex-col items-center">
+              <span class="glass-dark whitespace-nowrap px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] text-gold-light">AL SAFA RESIDENCE</span>
+              <span class="h-8 w-px bg-gradient-to-b from-gold to-ember"></span>
+              <span class="relative flex h-4 w-4 items-center justify-center">
+                <span class="absolute h-4 w-4 animate-pulse-ring rounded-full bg-ember/60"></span>
+                <span class="h-3 w-3 rotate-45 bg-gold"></span>
+              </span>
+            </div>
+          </div>
+          <div class="absolute left-4 top-4 flex gap-2">
+            <span class="glass-dark px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] text-gold">{contact.plusCode}</span>
+          </div>
+          <div class="absolute inset-x-4 bottom-4 flex flex-wrap items-center justify-between gap-3">
+            <a href={contact.directionsUrl} target="_blank" rel="noopener noreferrer" class="btn-gold">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"></path></svg>
+              Get Directions
+            </a>
+            <a href={contact.placeUrl} target="_blank" rel="noopener noreferrer" class="btn-ghost !bg-obsidian/60 !py-3 !text-[10px]">Open in Google Maps</a>
+          </div>
+        </div>
+
+        <!-- Verified pin drops -->
+        <ul class="mt-4 grid gap-2 sm:grid-cols-2" role="list" aria-label="Nearby landmarks">
+          {
+            landmarks.map((l) => (
+              <li>
+                <a
+                  href={mapLink(l.q)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={`group flex items-center justify-between gap-3 border px-4 py-3 transition-all duration-500 hover:-translate-y-0.5 ${l.primary ? 'border-gold bg-obsidian text-marble' : 'border-obsidian/10 bg-white/70 hover:border-gold'}`}
+                >
+                  <span class="flex items-center gap-3">
+                    <span class={`h-2 w-2 rotate-45 ${l.primary ? 'bg-ember' : 'bg-gold'}`} />
+                    <span class="text-sm font-medium">{l.name}</span>
+                  </span>
+                  <span class={`font-mono text-[9px] uppercase tracking-[0.25em] ${l.primary ? 'text-gold' : 'text-bronze'}`}>{l.type}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Rating + contact -->
+      <div class="flex flex-col gap-6 lg:col-span-5">
+        <div class="reveal clip-chamfer relative overflow-hidden bg-obsidian p-7 text-marble sm:p-8" style="--d:160ms">
+          <div class="grid-lines pointer-events-none absolute inset-0 opacity-40"></div>
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <span class="flex items-center gap-2 font-mono text-[10px] tracking-[0.3em] text-gold">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><path fill="#D4AF37" d="M21.35 11.1H12v2.9h5.35c-.23 1.4-1.66 4.1-5.35 4.1a5.9 5.9 0 0 1 0-11.8c1.8 0 3 .77 3.7 1.43l2.5-2.4A9.4 9.4 0 0 0 12 2.6a9.4 9.4 0 1 0 0 18.8c5.4 0 9-3.8 9-9.2 0-.6-.07-1.07-.15-1.5z"></path></svg>
+                GOOGLE RATING
+              </span>
+              <span class="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-ember">
+                <span class="h-1.5 w-1.5 rounded-full bg-ember"></span> VERIFIED
+              </span>
+            </div>
+            <div class="mt-6 flex items-end gap-5">
+              <p class="font-display text-6xl font-bold leading-none text-gold-gradient">{places.rating.toFixed(1)}</p>
+              <div>
+                <div class="flex gap-1 text-xl text-gold" aria-label={`${places.rating} out of 5 stars`}>
+                  {[1, 2, 3, 4, 5].map((s) => <span aria-hidden="true" class={s <= Math.round(places.rating) ? '' : 'opacity-30'}>★</span>)}
+                </div>
+                <p class="mt-2 font-mono text-[11px] tracking-[0.15em] text-marble/60">Based on {places.user_ratings_total} Google reviews</p>
+              </div>
+            </div>
+            <div class="mt-6 grid grid-cols-2 gap-2">
+              {
+                places.photos.map((src, i) => (
+                  <div data-media class="skeleton relative aspect-[4/3] overflow-hidden border border-gold/20">
+                    <img data-skeleton src={src} alt={`Al Safa Residence on Google — photo ${i + 1}`} loading="lazy" decoding="async" referrerpolicy="no-referrer" width="408" height="305" class="absolute inset-0 h-full w-full object-cover" />
+                    <span class="media-fallback absolute inset-0 items-center justify-center bg-charcoal font-mono text-[9px] tracking-[0.25em] text-gold">GOOGLE PHOTO</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal clip-chamfer border border-obsidian/10 bg-white p-7 shadow-[0_30px_80px_-40px_rgba(10,10,10,0.35)] sm:p-8" style="--d:220ms">
+          <p class="font-mono text-[10px] tracking-[0.3em] text-bronze">VISIT THE SALES GALLERY</p>
+          <address class="mt-5 space-y-5 not-italic">
+            <div class="flex gap-4">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+              <div>
+                <p class="text-sm font-semibold">{places.formatted_address}</p>
+                <p class="mt-1 font-arabic text-sm text-obsidian/60" dir="rtl" lang="ar">البصرة – قضاء شط العرب / منطقة البيبان</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg>
+              <div class="font-mono text-sm">
+                <a href={`tel:${contact.phoneTel}`} class="block hover:text-bronze">{contact.phoneDisplay}</a>
+                <a href={`tel:${contact.phone2Tel}`} class="mt-1 block hover:text-bronze">{contact.phone2Display}</a>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+              <div>
+                <p class="text-sm font-semibold">{contact.hoursLong}</p>
+                <p class="mt-1 inline-flex items-center gap-2 font-mono text-[11px] text-emerald-700">
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+                  {places.open_now ? 'Open now' : 'Closed now'}
+                </p>
+              </div>
+            </div>
+          </address>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews carousel -->
+    <div class="mt-24">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="eyebrow reveal !text-bronze">Verified Google Reviews</p>
+          <h3 class="headline reveal mt-4 text-2xl font-bold sm:text-3xl" style="--d:80ms">Resident <span class="text-gold-gradient">voices</span></h3>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" data-rev-prev class="flex h-11 w-11 items-center justify-center border border-obsidian/20 text-obsidian transition hover:border-gold hover:text-bronze" aria-label="Previous review">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
+          <button type="button" data-rev-next class="flex h-11 w-11 items-center justify-center border border-obsidian/20 text-obsidian transition hover:border-gold hover:text-bronze" aria-label="Next review">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div data-rev-track class="no-scrollbar -mx-5 mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 pb-8 lg:mx-0 lg:px-0" role="region" aria-label="Google reviews carousel" tabindex="0">
+        {
+          reviews.map((r, i) => (
+            <article class="reveal w-[85%] shrink-0 snap-start sm:w-[420px]" style={`--d:${i * 100}ms`}>
+              <div class="clip-chamfer relative h-full overflow-hidden border border-gold/30 bg-gradient-to-br from-white via-white to-gold-pale/60 p-8 shadow-[0_40px_80px_-40px_rgba(168,134,42,0.45)] transition-transform duration-700 ease-out-expo hover:-translate-y-2">
+                <span class="pointer-events-none absolute -right-2 -top-8 font-serif text-[9rem] leading-none text-gold/20" aria-hidden="true">
+                  “
+                </span>
+                <div class="flex items-center gap-4">
+                  <span class="clip-hex flex h-12 w-12 items-center justify-center bg-gradient-to-br from-gold to-bronze font-display text-xs font-bold text-obsidian">{initials(r.author_name)}</span>
+                  <div>
+                    <p class="font-semibold">{r.author_name}</p>
+                    <p class="font-mono text-[10px] tracking-[0.2em] text-bronze">GOOGLE · VERIFIED</p>
+                  </div>
+                </div>
+                <div class="mt-6 flex gap-1 text-lg text-gold" aria-label={`${r.rating} out of 5 stars`}>
+                  {[1, 2, 3, 4, 5].map((s) => <span aria-hidden="true" class={s <= r.rating ? '' : 'text-obsidian/15'}>★</span>)}
+                </div>
+                <p class="mt-4 min-h-[3.5rem] font-serif text-2xl leading-snug text-obsidian/85">
+                  {r.text ? `“${r.text}”` : <span class="italic text-obsidian/55">Awarded {r.rating} stars to Al Safa Residence.</span>}
+                </p>
+                <div class="mt-6 h-px w-16 bg-gold" />
+              </div>
+            </article>
+          ))
+        }
+        <article class="w-[85%] shrink-0 snap-start sm:w-[420px]">
+          <div class="clip-chamfer flex h-full flex-col justify-between gap-6 bg-obsidian p-8 text-marble">
+            <div>
+              <p class="font-mono text-[10px] tracking-[0.3em] text-gold">SHARE YOUR EXPERIENCE</p>
+              <p class="mt-4 font-serif text-2xl leading-snug">Visited the sales gallery or live at Al Safa? Tell others about it on Google.</p>
+            </div>
+            <a href={contact.placeUrl} target="_blank" rel="noopener noreferrer" class="btn-gold self-start">Write a Review</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-rev-track]');
+  if (track) {
+    const by = () => (track.firstElementChild as HTMLElement | null)?.getBoundingClientRect().width ?? 400;
+    document.querySelector('[data-rev-prev]')?.addEventListener('click', () => track.scrollBy({ left: -(by() + 20), behavior: 'smooth' }));
+    document.querySelector('[data-rev-next]')?.addEventListener('click', () => track.scrollBy({ left: by() + 20, behavior: 'smooth' }));
+  }
+</script>

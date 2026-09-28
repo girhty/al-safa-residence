@@ -1,0 +1,283 @@
+---
+import { contact } from '../data/site';
+
+const residences = [
+  { v: 'Tower Residence', d: 'Family apartments in the sculpted tower cluster', icon: 'M5 21V5l7-3 7 3v16 M9 9h2 M13 9h2 M9 13h2 M13 13h2' },
+  { v: 'Sky Villa', d: 'Terraced duplex living with private outdoor rooms', icon: 'M3 21h18 M5 21V11l7-5 7 5v10 M10 21v-5h4v5' },
+  { v: 'Penthouse', d: 'Crown-level residences with panoramic salons', icon: 'M12 2l3 5H9z M6 21V9h12v12 M10 13h4' }
+];
+const floors = [
+  { v: 'Low-rise (L05 — L10)', d: 'Garden & podium outlooks' },
+  { v: 'Mid-rise (L11 — L18)', d: 'Balanced city & river views' },
+  { v: 'High-rise (L19 — L28)', d: 'Elevated panoramas' },
+  { v: 'Sky Crown (L29+)', d: 'The pinnacle collection' }
+];
+---
+
+<section id="inquiry" class="relative overflow-hidden bg-obsidian py-24 lg:py-32" aria-labelledby="inquiry-title">
+  <div class="grid-lines pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute bottom-0 left-1/2 h-[500px] w-[900px] -translate-x-1/2 translate-y-1/2 rounded-full bg-ember/10 blur-[140px]" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="grid gap-14 lg:grid-cols-12">
+      <!-- Intro + financing -->
+      <div class="lg:col-span-5">
+        <p class="eyebrow reveal">05 — VIP Inquiry</p>
+        <h2 id="inquiry-title" class="headline reveal mt-6 text-[clamp(1.7rem,4vw,3.3rem)] font-bold" style="--d:80ms">
+          Your private<br /><span class="text-gold-gradient">presentation</span>
+        </h2>
+        <p class="reveal mt-6 font-serif text-xl leading-relaxed text-marble/70" style="--d:140ms">
+          Configure your preferences and our residence advisors will arrange a private presentation at the sales gallery — or in the city branch on Al-Saadi Street.
+        </p>
+
+        <p class="reveal mt-12 font-mono text-[10px] tracking-[0.3em] text-gold" style="--d:180ms">FINANCING PATHWAYS</p>
+        <div class="mt-4 grid gap-4">
+          <article class="reveal glass clip-chamfer p-6" style="--d:200ms">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display text-xs font-bold tracking-[0.18em]">RAFIDAIN BANK LOAN</h3>
+              <span class="font-arabic text-xs text-gold" dir="rtl" lang="ar">مصرف الرافدين</span>
+            </div>
+            <dl class="mt-5 grid grid-cols-2 gap-4 font-mono">
+              <div><dt class="text-[10px] tracking-[0.2em] text-marble/50">TERM</dt><dd class="mt-1 text-2xl text-gold-light">20 <span class="text-xs text-marble/60">yrs</span></dd></div>
+              <div><dt class="text-[10px] tracking-[0.2em] text-marble/50">DOWN PAYMENT</dt><dd class="mt-1 text-2xl text-gold-light">25<span class="text-xs text-marble/60">%</span></dd></div>
+            </dl>
+          </article>
+          <article class="reveal glass clip-chamfer p-6" style="--d:260ms">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display text-xs font-bold tracking-[0.18em]">TRADE BANK OF IRAQ · TBI</h3>
+              <span class="font-arabic text-xs text-gold" dir="rtl" lang="ar">مصرف التجارة العراقي</span>
+            </div>
+            <dl class="mt-5 grid grid-cols-2 gap-4 font-mono">
+              <div><dt class="text-[10px] tracking-[0.2em] text-marble/50">DOWN PAYMENT</dt><dd class="mt-1 text-2xl text-gold-light">0<span class="text-xs text-marble/60">%</span></dd></div>
+              <div><dt class="text-[10px] tracking-[0.2em] text-marble/50">MONTHLY FROM</dt><dd class="mt-1 text-2xl text-gold-light">739K <span class="text-xs text-marble/60">IQD</span></dd></div>
+            </dl>
+          </article>
+        </div>
+        <p class="mt-4 font-mono text-[10px] leading-relaxed tracking-[0.1em] text-marble/35">Financing subject to bank eligibility and terms. Ask our advisors for current conditions.</p>
+      </div>
+
+      <!-- Form -->
+      <div class="lg:col-span-7">
+        <form data-vip-form novalidate class="reveal clip-chamfer relative border border-gold/25 bg-charcoal/80 p-6 backdrop-blur sm:p-10" style="--d:120ms" aria-describedby="vip-desc">
+          <p id="vip-desc" class="sr-only">A three-step private presentation request form.</p>
+          <input type="hidden" name="intent" value="Private Presentation" data-intent />
+
+          <!-- Stepper -->
+          <ol class="flex items-center gap-3" aria-label="Form progress">
+            {
+              ['Residence', 'Floor Range', 'Presentation'].map((s, i) => (
+                <li class="flex flex-1 items-center gap-3" data-step-ind={i + 1}>
+                  <span class="clip-hex flex h-9 w-9 shrink-0 items-center justify-center bg-charcoal-600 font-mono text-[11px] text-marble/60 transition-all duration-500 data-[state=active]:bg-gold data-[state=active]:text-obsidian data-[state=done]:bg-ember data-[state=done]:text-obsidian" data-dot>
+                    {i + 1}
+                  </span>
+                  <span class="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-marble/60 sm:block">{s}</span>
+                  {i < 2 && <span class="h-px flex-1 bg-gold/20" />}
+                </li>
+              ))
+            }
+          </ol>
+          <div class="mt-5 h-px w-full bg-white/10"><div data-progress class="h-px w-1/3 bg-gradient-to-r from-gold to-ember transition-all duration-700 ease-out-expo"></div></div>
+
+          <!-- Step 1 -->
+          <fieldset data-step="1" class="mt-8">
+            <legend class="font-display text-sm font-bold tracking-[0.16em]">SELECT RESIDENCE TYPE</legend>
+            <div class="mt-6 grid gap-3 sm:grid-cols-3">
+              {
+                residences.map((r, i) => (
+                  <label class="relative block cursor-pointer">
+                    <input type="radio" name="residence" value={r.v} class="peer sr-only" checked={i === 0} />
+                    <span class="flex h-full flex-col gap-4 border border-gold/20 bg-obsidian/60 p-5 transition-all duration-500 hover:border-gold/60 peer-checked:border-ember peer-checked:bg-ember/10 peer-checked:shadow-[0_0_40px_-10px_rgba(255,159,28,0.5)] peer-focus-visible:ring-2 peer-focus-visible:ring-ember">
+                      <svg class="h-8 w-8 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><path d={r.icon} /></svg>
+                      <span class="font-display text-[11px] font-bold tracking-[0.14em]">{r.v.toUpperCase()}</span>
+                      <span class="font-serif text-base leading-snug text-marble/60">{r.d}</span>
+                    </span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <!-- Step 2 -->
+          <fieldset data-step="2" class="mt-8 hidden">
+            <legend class="font-display text-sm font-bold tracking-[0.16em]">CHOOSE FLOOR RANGE</legend>
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              {
+                floors.map((f, i) => (
+                  <label class="relative block cursor-pointer">
+                    <input type="radio" name="floor" value={f.v} class="peer sr-only" checked={i === 1} />
+                    <span class="flex items-center justify-between gap-4 border border-gold/20 bg-obsidian/60 p-5 transition-all duration-500 hover:border-gold/60 peer-checked:border-ember peer-checked:bg-ember/10 peer-focus-visible:ring-2 peer-focus-visible:ring-ember">
+                      <span>
+                        <span class="block font-mono text-xs tracking-[0.12em] text-gold-light">{f.v}</span>
+                        <span class="mt-1 block font-serif text-base text-marble/60">{f.d}</span>
+                      </span>
+                      <span class="flex items-end gap-0.5" aria-hidden="true">
+                        {[0, 1, 2, 3].map((b) => (
+                          <span class={`w-1.5 ${b <= i ? 'bg-gold' : 'bg-white/10'}`} style={`height:${8 + b * 6}px`} />
+                        ))}
+                      </span>
+                    </span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <!-- Step 3 -->
+          <fieldset data-step="3" class="mt-8 hidden">
+            <legend class="font-display text-sm font-bold tracking-[0.16em]">REQUEST PRIVATE PRESENTATION</legend>
+            <div class="mt-6 grid gap-x-6 gap-y-7 sm:grid-cols-2">
+              <div class="relative">
+                <input id="vip-name" name="name" type="text" autocomplete="name" required placeholder=" " class="peer w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-6 text-marble outline-none transition-colors focus:border-ember focus:ring-0" />
+                <label for="vip-name" class="pointer-events-none absolute left-0 top-0 font-mono text-[10px] uppercase tracking-[0.25em] text-gold transition-all duration-300 peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-marble/50 peer-focus:top-0 peer-focus:font-mono peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-[0.25em] peer-focus:text-ember">Full name *</label>
+              </div>
+              <div class="relative">
+                <input id="vip-phone" name="phone" type="tel" autocomplete="tel" required placeholder=" " inputmode="tel" class="peer w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-6 text-marble outline-none transition-colors focus:border-ember focus:ring-0" />
+                <label for="vip-phone" class="pointer-events-none absolute left-0 top-0 font-mono text-[10px] uppercase tracking-[0.25em] text-gold transition-all duration-300 peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-marble/50 peer-focus:top-0 peer-focus:font-mono peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-[0.25em] peer-focus:text-ember">Phone / WhatsApp *</label>
+              </div>
+              <div class="relative">
+                <input id="vip-email" name="email" type="email" autocomplete="email" placeholder=" " class="peer w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-6 text-marble outline-none transition-colors focus:border-ember focus:ring-0" />
+                <label for="vip-email" class="pointer-events-none absolute left-0 top-0 font-mono text-[10px] uppercase tracking-[0.25em] text-gold transition-all duration-300 peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-marble/50 peer-focus:top-0 peer-focus:font-mono peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-[0.25em] peer-focus:text-ember">Email (optional)</label>
+              </div>
+              <div class="relative">
+                <label for="vip-date" class="block font-mono text-[10px] uppercase tracking-[0.25em] text-gold">Preferred date</label>
+                <input id="vip-date" name="date" type="date" class="mt-1 w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-2 text-marble outline-none [color-scheme:dark] focus:border-ember focus:ring-0" />
+              </div>
+              <div class="relative">
+                <label for="vip-branch" class="block font-mono text-[10px] uppercase tracking-[0.25em] text-gold">Presentation venue</label>
+                <select id="vip-branch" name="branch" class="mt-1 w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-2 text-marble outline-none focus:border-ember focus:ring-0">
+                  {contact.branches.map((b) => <option class="bg-obsidian" value={`${b.name} — ${b.address}`}>{b.name} · {b.address.replace('Basrah — ', '')}</option>)}
+                </select>
+              </div>
+              <div class="relative">
+                <label for="vip-finance" class="block font-mono text-[10px] uppercase tracking-[0.25em] text-gold">Financing preference</label>
+                <select id="vip-finance" name="finance" class="mt-1 w-full border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-2 text-marble outline-none focus:border-ember focus:ring-0">
+                  <option class="bg-obsidian">Rafidain Bank loan (20 yrs · 25% down)</option>
+                  <option class="bg-obsidian">TBI loan (no down payment)</option>
+                  <option class="bg-obsidian">Cash purchase</option>
+                  <option class="bg-obsidian">Advise me</option>
+                </select>
+              </div>
+              <div class="relative sm:col-span-2">
+                <textarea id="vip-notes" name="notes" rows="3" placeholder=" " class="peer w-full resize-none border-0 border-b border-marble/20 bg-transparent px-0 pb-2 pt-6 text-marble outline-none transition-colors focus:border-ember focus:ring-0"></textarea>
+                <label for="vip-notes" class="pointer-events-none absolute left-0 top-0 font-mono text-[10px] uppercase tracking-[0.25em] text-gold transition-all duration-300 peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-marble/50 peer-focus:top-0 peer-focus:font-mono peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-[0.25em] peer-focus:text-ember">Notes or special requests</label>
+              </div>
+            </div>
+            <p data-error class="mt-5 hidden font-mono text-xs text-ember" role="alert"></p>
+          </fieldset>
+
+          <!-- Navigation -->
+          <div data-nav class="mt-10 flex items-center justify-between gap-4">
+            <button type="button" data-back class="btn-ghost invisible !px-5">Back</button>
+            <button type="button" data-next class="btn-gold">
+              Continue
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            <button type="submit" data-submit class="btn-gold hidden">
+              Request Presentation
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+
+          <!-- Success -->
+          <div data-success class="absolute inset-0 hidden flex-col items-center justify-center bg-charcoal p-8 text-center" role="status" aria-live="polite">
+            <span class="clip-hex flex h-16 w-16 items-center justify-center bg-gradient-to-br from-gold to-ember">
+              <svg class="h-7 w-7 text-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+            </span>
+            <p class="mt-6 font-display text-base font-bold tracking-[0.18em]">REQUEST PREPARED</p>
+            <p class="mt-3 max-w-sm font-serif text-lg text-marble/70">We’ve opened WhatsApp with your request. Send the message and a residence advisor will confirm your private presentation.</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+              <a data-wa-link href={contact.whatsapp} target="_blank" rel="noopener noreferrer" class="btn-gold">Open WhatsApp</a>
+              <a href={`tel:${contact.phoneTel}`} class="btn-ghost">Call {contact.phoneDisplay}</a>
+            </div>
+            <button type="button" data-reset class="mt-6 font-mono text-[11px] tracking-[0.2em] text-marble/50 underline-offset-4 hover:text-gold hover:underline">Start a new request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-vip-form]');
+  if (form) {
+    const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('[data-step]'));
+    const inds = Array.from(form.querySelectorAll<HTMLElement>('[data-step-ind]'));
+    const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
+    const next = form.querySelector<HTMLButtonElement>('[data-next]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const progress = form.querySelector<HTMLElement>('[data-progress]')!;
+    const error = form.querySelector<HTMLElement>('[data-error]')!;
+    const success = form.querySelector<HTMLElement>('[data-success]')!;
+    const intent = form.querySelector<HTMLInputElement>('[data-intent]')!;
+    const WA = '9647844000063';
+    let cur = 1;
+
+    const show = (n: number) => {
+      cur = n;
+      steps.forEach((s) => s.classList.toggle('hidden', Number(s.dataset.step) !== n));
+      inds.forEach((ind) => {
+        const i = Number(ind.dataset.stepInd);
+        ind.querySelector('[data-dot]')?.setAttribute('data-state', i < n ? 'done' : i === n ? 'active' : 'idle');
+        if (i === n) ind.setAttribute('aria-current', 'step');
+        else ind.removeAttribute('aria-current');
+      });
+      progress.style.width = `${(n / 3) * 100}%`;
+      back.classList.toggle('invisible', n === 1);
+      next.classList.toggle('hidden', n === 3);
+      submit.classList.toggle('hidden', n !== 3);
+      const first = steps[n - 1]?.querySelector<HTMLElement>('input:checked, input, select');
+      first?.focus({ preventScroll: true });
+    };
+    show(1);
+
+    next.addEventListener('click', () => show(Math.min(3, cur + 1)));
+    back.addEventListener('click', () => show(Math.max(1, cur - 1)));
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name = String(fd.get('name') || '').trim();
+      const phone = String(fd.get('phone') || '').trim();
+      if (!name || phone.replace(/\D/g, '').length < 7) {
+        error.textContent = 'Please provide your full name and a valid phone number.';
+        error.classList.remove('hidden');
+        (form.querySelector(!name ? '#vip-name' : '#vip-phone') as HTMLElement)?.focus();
+        return;
+      }
+      error.classList.add('hidden');
+      const lines = [
+        `✦ ${fd.get('intent')} — Al Safa Residence`,
+        `Residence: ${fd.get('residence')}`,
+        `Floor range: ${fd.get('floor')}`,
+        `Name: ${name}`,
+        `Phone: ${phone}`,
+        fd.get('email') ? `Email: ${fd.get('email')}` : '',
+        fd.get('date') ? `Preferred date: ${fd.get('date')}` : '',
+        `Venue: ${fd.get('branch')}`,
+        `Financing: ${fd.get('finance')}`,
+        fd.get('notes') ? `Notes: ${fd.get('notes')}` : ''
+      ].filter(Boolean);
+      const url = `https://wa.me/${WA}?text=${encodeURIComponent(lines.join('\n'))}`;
+      form.querySelector<HTMLAnchorElement>('[data-wa-link]')!.href = url;
+      success.classList.remove('hidden');
+      success.classList.add('flex');
+      window.open(url, '_blank', 'noopener');
+    });
+
+    form.querySelector('[data-reset]')?.addEventListener('click', () => {
+      form.reset();
+      intent.value = 'Private Presentation';
+      success.classList.add('hidden');
+      success.classList.remove('flex');
+      show(1);
+    });
+
+    // Brochure intent from sticky CTA
+    window.addEventListener('alsafa:brochure', () => {
+      intent.value = 'Brochure Request';
+      const notes = form.querySelector<HTMLTextAreaElement>('#vip-notes');
+      if (notes && !notes.value) notes.value = 'Please send me the Al Safa Residence brochure and price list.';
+      show(3);
+    });
+  }
+</script>

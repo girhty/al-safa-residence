@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Preloader from '../components/Preloader.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Philosophy from '../components/Philosophy.astro';
+import MasterPlan from '../components/MasterPlan.astro';
+import InstagramGallery from '../components/InstagramGallery.astro';
+import LocationReviews from '../components/LocationReviews.astro';
+import Inquiry from '../components/Inquiry.astro';
+import Footer from '../components/Footer.astro';
+import StickyCTA from '../components/StickyCTA.astro';
+
+const title = 'Al Safa Residence · مجمع الصفا السكني — The Next Evolution of Luxury Living in Basrah';
+const description =
+  'Al Safa Residence (مجمع الصفا السكني) — a master-planned luxury residential city on the Shatt Al-Arab, Al-Beban, Basrah. Explore the 3D master plan, sky villas and penthouses, flexible bank financing, and book a private presentation.';
+---
+
+<Layout title={title} description={description}>
+  <Preloader />
+  <Header />
+  <main id="main">
+    <Hero />
+    <Philosophy />
+    <MasterPlan />
+    <InstagramGallery />
+    <LocationReviews />
+    <Inquiry />
+  </main>
+  <Footer />
+  <StickyCTA />
+</Layout>
